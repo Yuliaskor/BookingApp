@@ -1,8 +1,13 @@
 package com.example.bookingapp.model;
 
+import com.example.bookingapp.dto.LocationDTO;
+import com.example.bookingapp.dto.response.ListingDTO;
 import com.example.bookingapp.enums.Bed;
 import com.example.bookingapp.enums.RoomType;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -10,6 +15,9 @@ import java.util.List;
 
 @Entity
 @Table(name = "listings")
+@NoArgsConstructor
+@Getter
+@Setter
 public class Listing {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,13 +25,13 @@ public class Listing {
     private long id;
     @ManyToOne(optional = false)
     @JoinColumn(name = "host_id")
-    private User host;
+    private Host host;
     @Column(nullable = false)
     private String title;
     @Lob
     @Column(columnDefinition = "text", nullable = false)
     private String description;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "location_id", nullable = false)
     private Location location;
     @ElementCollection
@@ -34,9 +42,7 @@ public class Listing {
     private BigDecimal pricePerNight;
     @Column(nullable = false)
     private int maxGuests;
-    @Column(nullable = false)
     private LocalDate availableFrom;
-    @Column(nullable = false)
     private LocalDate availableTo;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -56,4 +62,39 @@ public class Listing {
     @CollectionTable(name = "listings_amenities", joinColumns = @JoinColumn(name = "listing_id"))
     @Column(name = "amenity", nullable = false)
     private List<String> amenities;
+
+    public Listing(String title, String description, LocationDTO location, BigDecimal pricePerNight, int maxGuests, LocalDate availableFrom, LocalDate availableTo, RoomType roomType, List<Bed> beds, List<String> amenities) {
+        this.title = title;
+        this.description = description;
+        this.location = location.toEntity();
+        this.pricePerNight = pricePerNight;
+        this.maxGuests = maxGuests;
+        this.availableFrom = availableFrom;
+        this.availableTo = availableTo;
+        this.roomType = roomType;
+        this.beds = beds;
+        this.amenities = amenities;
+        this.photos = List.of();
+        this.reservations = List.of();
+        this.ratings = List.of();
+    }
+
+    public ListingDTO toDTO() {
+        return new ListingDTO(
+                this.id,
+                this.host.toListingDTO(),
+                this.title,
+                this.description,
+                this.location.toDTO(),
+                this.photos,
+                this.pricePerNight,
+                this.maxGuests,
+                this.availableFrom,
+                this.availableTo,
+                this.roomType,
+                this.reservations.stream().map(Reservation::toDTO).toList(),
+                this.beds,
+                this.amenities
+        );
+    }
 }
