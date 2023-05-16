@@ -1,7 +1,6 @@
-package com.example.bookingapp;
+package com.example.bookingapp.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
@@ -13,13 +12,13 @@ public class Rating {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "rating_id")
     private long id;
-    @NotNull
+    @Column(nullable = false)
     private String author;
-    @NotNull
+    @Column(nullable = false)
     private double rating;
-    @NotNull
+    @Column(nullable = false)
     private String comment;
-    @NotNull
+    @Column(nullable = false)
     @CreationTimestamp
     private LocalDate createdAt;
     @ManyToOne(optional = false)

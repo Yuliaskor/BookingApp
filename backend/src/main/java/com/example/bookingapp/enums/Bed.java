@@ -1,4 +1,4 @@
-package com.example.bookingapp;
+package com.example.bookingapp.enums;
 
 import lombok.Getter;
 

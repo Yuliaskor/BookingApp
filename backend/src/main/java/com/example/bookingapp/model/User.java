@@ -1,7 +1,6 @@
-package com.example.bookingapp;
+package com.example.bookingapp.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 
@@ -12,16 +11,14 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private long id;
-    @Column(unique = true)
-    @NotNull
+    @Column(unique = true, nullable = false)
     private String email;
-    @NotNull
+    @Column(nullable = false)
     private String password;
-    @NotNull
+    @Column(nullable = false)
     private String name;
     @Lob
-    @Column(columnDefinition = "text")
-    @NotNull
+    @Column(columnDefinition = "text", nullable = false)
     private String aboutMe;
     @OneToMany
     @JoinTable(name = "user_listings", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "listing_id"))

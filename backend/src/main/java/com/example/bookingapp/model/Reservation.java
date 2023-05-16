@@ -1,7 +1,6 @@
-package com.example.bookingapp;
+package com.example.bookingapp.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -16,16 +15,16 @@ public class Reservation {
     @ManyToOne(optional = false)
     @JoinColumn(name = "listing_id")
     private Listing listing;
-    @NotNull
+    @Column(nullable = false)
     private LocalDate checkInDate;
-    @NotNull
+    @Column(nullable = false)
     private LocalDate checkOutDate;
-    @NotNull
+    @Column(nullable = false)
     private BigDecimal totalPrice;
-    @NotNull
+    @Column(nullable = false)
     private String tenantName;
-    @NotNull
+    @Column(nullable = false)
     private String tenantEmail;
-    @NotNull
+    @Column(nullable = false)
     private int numberOfGuests;
 }

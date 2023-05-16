@@ -1,7 +1,6 @@
-package com.example.bookingapp;
+package com.example.bookingapp.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "locations")
@@ -10,17 +9,16 @@ public class Location {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "location_id")
     private long id;
-    @NotNull
+    @Column(nullable = false)
     private double latitude;
-    @NotNull
+    @Column(nullable = false)
     private double longitude;
-    @NotNull
+    @Column(nullable = false)
     private String city;
-    @NotNull
+    @Column(nullable = false)
     private String country;
     @Lob
-    @Column(columnDefinition = "text")
-    @NotNull
+    @Column(columnDefinition = "text", nullable = false)
     private String description;
 
 }

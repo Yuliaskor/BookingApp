@@ -1,7 +1,8 @@
-package com.example.bookingapp;
+package com.example.bookingapp.model;
 
+import com.example.bookingapp.enums.Bed;
+import com.example.bookingapp.enums.RoomType;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -17,30 +18,28 @@ public class Listing {
     @ManyToOne(optional = false)
     @JoinColumn(name = "host_id")
     private User host;
-    @NotNull
+    @Column(nullable = false)
     private String title;
     @Lob
-    @Column(columnDefinition = "text")
-    @NotNull
+    @Column(columnDefinition = "text", nullable = false)
     private String description;
     @OneToOne
-    @NotNull
-    @JoinColumn(name = "location_id")
+    @JoinColumn(name = "location_id", nullable = false)
     private Location location;
     @ElementCollection
     @CollectionTable(name = "photos", joinColumns = @JoinColumn(name = "listing_id"))
     @Column(name = "photo_url")
     private List<String> photos;
-    @NotNull
+    @Column(nullable = false)
     private BigDecimal pricePerNight;
-    @NotNull
+    @Column(nullable = false)
     private int maxGuests;
-    @NotNull
+    @Column(nullable = false)
     private LocalDate availableFrom;
-    @NotNull
+    @Column(nullable = false)
     private LocalDate availableTo;
     @Enumerated(EnumType.STRING)
-    @NotNull
+    @Column(nullable = false)
     private RoomType roomType;
     @OneToMany
     @JoinTable(name = "listings_ratings", joinColumns = @JoinColumn(name = "listing_id"), inverseJoinColumns = @JoinColumn(name = "rating_id"))
@@ -50,11 +49,11 @@ public class Listing {
     private List<Reservation> reservations;
     @ElementCollection
     @CollectionTable(name = "listings_beds", joinColumns = @JoinColumn(name = "listing_id"))
-    @Column(name = "bed")
+    @Column(name = "bed", nullable = false)
     @Enumerated(EnumType.STRING)
     private List<Bed> beds;
     @ElementCollection
     @CollectionTable(name = "listings_amenities", joinColumns = @JoinColumn(name = "listing_id"))
-    @Column(name = "amenity")
+    @Column(name = "amenity", nullable = false)
     private List<String> amenities;
 }
