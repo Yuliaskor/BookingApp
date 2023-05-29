@@ -9,6 +9,7 @@ import com.example.bookingapp.model.Reservation;
 import com.example.bookingapp.repository.HostRepository;
 import com.example.bookingapp.repository.ListingRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -23,8 +24,8 @@ public class ListingService {
     private final HostService hostService;
     private final HostRepository hostRepository;
 
-    public List<Listing> getListings(Pageable pageable) {
-        return listingRepository.findAll(pageable).toList();
+    public Page<Listing> getListings(Pageable pageable) {
+        return listingRepository.findAll(pageable);
     }
 
     public Listing getListingById(long id) {
