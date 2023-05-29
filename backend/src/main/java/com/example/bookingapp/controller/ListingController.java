@@ -6,8 +6,10 @@ import com.example.bookingapp.dto.response.ReservationDTO;
 import com.example.bookingapp.model.Listing;
 import com.example.bookingapp.model.Reservation;
 import com.example.bookingapp.service.ListingService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -24,7 +26,8 @@ public class ListingController {
     private final ListingService listingService;
 
     @GetMapping()
-    List<ListingDTO> getListings(@PageableDefault(size = 20, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
+    @Operation(summary = "Get listings", description = "Get all listings")
+    List<ListingDTO> getListings(@ParameterObject @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
         return listingService.getListings(pageable)
                 .stream()
                 .map(Listing::toDTO)
@@ -32,17 +35,20 @@ public class ListingController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Get listing", description = "Get listing by id")
     ListingDTO getListing(@PathVariable long id) {
         return listingService.getListingById(id).toDTO();
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Delete listing", description = "Delete listing by id")
     void deleteListing(@PathVariable long id) {
         listingService.deleteListing(id);
     }
 
     @GetMapping("/{id}/reservations")
+    @Operation(summary = "Get reservations", description = "Get all reservations for listing")
     List<ReservationDTO> getReservations(@PathVariable long id) {
         return listingService.getReservationsByListingId(id)
                 .stream()
@@ -52,6 +58,7 @@ public class ListingController {
 
     @PostMapping("/{id}/reservations")
     @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "Add new reservation", description = "Add new reservation to listing reservations")
     ReservationDTO addReservation(@PathVariable("id") long listingId, @Valid @RequestBody ReservationRequest reservation) {
         return listingService.addReservationToListing(listingId, reservation).toDTO();
     }
