@@ -6,6 +6,7 @@ import com.example.bookingapp.exceptions.listing.ListingNotFoundException;
 import com.example.bookingapp.model.Host;
 import com.example.bookingapp.model.Listing;
 import com.example.bookingapp.model.Reservation;
+import com.example.bookingapp.repository.HostRepository;
 import com.example.bookingapp.repository.ListingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +21,7 @@ public class ListingService {
 
     private final ListingRepository listingRepository;
     private final HostService hostService;
+    private final HostRepository hostRepository;
 
     public List<Listing> getListings(Pageable pageable) {
         return listingRepository.findAll(pageable).toList();
@@ -29,11 +31,13 @@ public class ListingService {
         return listingRepository.findById(id).orElseThrow(() -> new ListingNotFoundException(id));
     }
 
-    public Listing addListing(ListingRequest listingRequest) {
-        Host host = hostService.getHostById(listingRequest.hostId());
+    public Listing addListing(int hostId, ListingRequest listingRequest) {
+        Host host = hostService.getHostById(hostId);
         Listing listing = listingRequest.toEntity();
         listing.setHost(host);
-        return listingRepository.save(listing);
+        host.addListing(listing);
+        hostRepository.save(host);
+        return host.getListings().get(host.getListings().size() - 1);
     }
 
     public void deleteListing(long id) {

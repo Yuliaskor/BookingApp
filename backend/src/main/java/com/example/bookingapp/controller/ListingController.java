@@ -1,6 +1,5 @@
 package com.example.bookingapp.controller;
 
-import com.example.bookingapp.dto.request.ListingRequest;
 import com.example.bookingapp.dto.request.ReservationRequest;
 import com.example.bookingapp.dto.response.ListingDTO;
 import com.example.bookingapp.dto.response.ReservationDTO;
@@ -37,15 +36,9 @@ public class ListingController {
         return listingService.getListingById(id).toDTO();
     }
 
-    @PostMapping()
-    @ResponseStatus(HttpStatus.CREATED)
-    ListingDTO addListing(@Valid @RequestBody ListingRequest listing) {
-        return listingService.addListing(listing).toDTO();
-    }
-
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    void deleteHost(@PathVariable long id) {
+    void deleteListing(@PathVariable long id) {
         listingService.deleteListing(id);
     }
 

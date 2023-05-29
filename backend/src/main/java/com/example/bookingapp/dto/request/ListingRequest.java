@@ -15,8 +15,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 public record ListingRequest(
-        @NotNull(message = "Host id must not be null")
-        long hostId,
         @NotBlank(message = "Title must not be blank")
         String title,
         @NotBlank(message = "Description must not be blank")
@@ -28,7 +26,7 @@ public record ListingRequest(
         BigDecimal pricePerNight,
         @Min(value = 1, message = "Max guests must be greater than 0")
         @NotNull(message = "Max guests must not be null")
-        int maxGuests,
+        Integer maxGuests,
         @JsonFormat(pattern = "yyyy-MM-dd")
         LocalDate availableFrom,
         @JsonFormat(pattern = "yyyy-MM-dd")

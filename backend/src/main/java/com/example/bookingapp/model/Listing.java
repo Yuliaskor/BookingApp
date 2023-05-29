@@ -48,7 +48,7 @@ public class Listing {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private RoomType roomType;
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinTable(name = "listings_ratings", joinColumns = @JoinColumn(name = "listing_id"), inverseJoinColumns = @JoinColumn(name = "rating_id"))
     private List<Rating> ratings;
     @OneToMany(cascade = CascadeType.ALL)

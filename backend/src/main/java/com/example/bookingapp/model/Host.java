@@ -29,7 +29,7 @@ public class Host {
     @Lob
     @Column(columnDefinition = "text", nullable = false)
     private String aboutMe;
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinTable(name = "host_listings", joinColumns = @JoinColumn(name = "host_id"), inverseJoinColumns = @JoinColumn(name = "listing_id"))
     private List<Listing> listings;
 
@@ -57,5 +57,9 @@ public class Host {
                 this.name,
                 this.aboutMe
         );
+    }
+
+    public void addListing(Listing listing) {
+        this.listings.add(listing);
     }
 }
