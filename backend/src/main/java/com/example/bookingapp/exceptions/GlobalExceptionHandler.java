@@ -3,6 +3,7 @@ package com.example.bookingapp.exceptions;
 import com.example.bookingapp.exceptions.host.HostAlreadyExistsException;
 import com.example.bookingapp.exceptions.host.HostNotFoundException;
 import com.example.bookingapp.exceptions.listing.ListingNotFoundException;
+import com.example.bookingapp.exceptions.reservation.ReservationNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -37,6 +38,14 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ListingNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleListingNotFoundException(ListingNotFoundException e) {
+        ErrorResponse errorResponse = new ErrorResponse(404, e.getMessage(), LocalDateTime.now());
+        return ResponseEntity
+                .badRequest()
+                .body(errorResponse);
+    }
+
+    @ExceptionHandler(ReservationNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleReservationNotFoundException(ReservationNotFoundException e) {
         ErrorResponse errorResponse = new ErrorResponse(404, e.getMessage(), LocalDateTime.now());
         return ResponseEntity
                 .badRequest()
