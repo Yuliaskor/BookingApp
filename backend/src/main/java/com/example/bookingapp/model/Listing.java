@@ -141,4 +141,8 @@ public class Listing {
             throw new IllegalArgumentException(String.format("Listing cannot accommodate %d guests", reservation.getNumberOfGuests()));
         }
     }
+
+    public void deleteReservation(Reservation reservation) {
+        reservations.remove(reservation);
+    }
 }

@@ -66,4 +66,12 @@ public class ListingController {
                 .body(listingService.addReservationToListing(listingId, reservation).toDTO());
     }
 
+    // todo: only host can cancel reservation
+    @DeleteMapping("/{listing_id}/reservations/{reservation_id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Cancel reservation", description = "Delete reservation from listing reservations")
+    void cancelReservation(@PathVariable("listing_id") long listingId, @PathVariable("reservation_id") long reservationId) {
+        listingService.deleteReservationFromListing(listingId, reservationId);
+    }
+
 }
