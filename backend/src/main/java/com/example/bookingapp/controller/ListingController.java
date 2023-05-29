@@ -1,8 +1,10 @@
 package com.example.bookingapp.controller;
 
-import com.example.bookingapp.dto.request.ListingRequest;
+import com.example.bookingapp.dto.request.ReservationRequest;
 import com.example.bookingapp.dto.response.ListingDTO;
+import com.example.bookingapp.dto.response.ReservationDTO;
 import com.example.bookingapp.model.Listing;
+import com.example.bookingapp.model.Reservation;
 import com.example.bookingapp.service.ListingService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -34,15 +36,24 @@ public class ListingController {
         return listingService.getListingById(id).toDTO();
     }
 
-    @PostMapping()
-    @ResponseStatus(HttpStatus.CREATED)
-    ListingDTO addListing(@Valid @RequestBody ListingRequest listing) {
-        return listingService.addListing(listing).toDTO();
-    }
-
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    void deleteHost(@PathVariable long id) {
+    void deleteListing(@PathVariable long id) {
         listingService.deleteListing(id);
     }
+
+    @GetMapping("/{id}/reservations")
+    List<ReservationDTO> getReservations(@PathVariable long id) {
+        return listingService.getReservationsByListingId(id)
+                .stream()
+                .map(Reservation::toDTO)
+                .toList();
+    }
+
+    @PostMapping("/{id}/reservations")
+    @ResponseStatus(HttpStatus.CREATED)
+    ReservationDTO addReservation(@PathVariable("id") long listingId, @Valid @RequestBody ReservationRequest reservation) {
+        return listingService.addReservationToListing(listingId, reservation).toDTO();
+    }
+
 }
