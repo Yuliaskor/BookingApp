@@ -10,10 +10,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,17 +29,17 @@ public class ListingController {
 
     @GetMapping()
     @Operation(summary = "Get listings", description = "Get all listings")
-    List<ListingDTO> getListings(@ParameterObject @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
-        return listingService.getListings(pageable)
-                .stream()
-                .map(Listing::toDTO)
-                .toList();
+    ResponseEntity<Page<ListingDTO>> getListings(
+            @ParameterObject
+            @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.ASC)
+            Pageable pageable) {
+        return ResponseEntity.ok(listingService.getListings(pageable).map(Listing::toDTO));
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Get listing", description = "Get listing by id")
-    ListingDTO getListing(@PathVariable long id) {
-        return listingService.getListingById(id).toDTO();
+    ResponseEntity<ListingDTO> getListing(@PathVariable long id) {
+        return ResponseEntity.ok(listingService.getListingById(id).toDTO());
     }
 
     @DeleteMapping("/{id}")
@@ -49,18 +51,19 @@ public class ListingController {
 
     @GetMapping("/{id}/reservations")
     @Operation(summary = "Get reservations", description = "Get all reservations for listing")
-    List<ReservationDTO> getReservations(@PathVariable long id) {
-        return listingService.getReservationsByListingId(id)
+    ResponseEntity<List<ReservationDTO>> getReservations(@PathVariable long id) {
+        return ResponseEntity.ok(listingService.getReservationsByListingId(id)
                 .stream()
                 .map(Reservation::toDTO)
-                .toList();
+                .toList());
     }
 
     @PostMapping("/{id}/reservations")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Add new reservation", description = "Add new reservation to listing reservations")
-    ReservationDTO addReservation(@PathVariable("id") long listingId, @Valid @RequestBody ReservationRequest reservation) {
-        return listingService.addReservationToListing(listingId, reservation).toDTO();
+    ResponseEntity<ReservationDTO> addReservation(@PathVariable("id") long listingId, @Valid @RequestBody ReservationRequest reservation) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(listingService.addReservationToListing(listingId, reservation).toDTO());
     }
 
 }

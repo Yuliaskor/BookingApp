@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,15 +25,16 @@ public class HostController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Get host", description = "Get host by id")
-    HostDTO getHost(@PathVariable long id) {
-        return hostService.getHostById(id).toDTO();
+    ResponseEntity<HostDTO> getHost(@PathVariable long id) {
+        return ResponseEntity.ok(hostService.getHostById(id).toDTO());
     }
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Add new host", description = "Add new host")
-    HostDTO addHost(@Valid @RequestBody HostRequest host) {
-        return hostService.addHost(host).toDTO();
+    ResponseEntity<HostDTO> addHost(@Valid @RequestBody HostRequest host) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(hostService.addHost(host).toDTO());
     }
 
     @DeleteMapping("/{id}")
@@ -45,8 +47,9 @@ public class HostController {
     @PostMapping("/{id}/listings")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Add new listing", description = "Add new listing to host listings")
-    ListingDTO addListing(@PathVariable("id") int hostId, @Valid @RequestBody ListingRequest listing) {
-        return listingService.addListing(hostId, listing).toDTO();
+    ResponseEntity<ListingDTO> addListing(@PathVariable("id") int hostId, @Valid @RequestBody ListingRequest listing) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(listingService.addListing(hostId, listing).toDTO());
     }
 
 }
