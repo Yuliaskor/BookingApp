@@ -24,6 +24,6 @@ public class HostDbInit {
                 new Host(4, "test4@test.com", "Matilda Rosenbaum", "about me4", List.of()),
                 new Host(5, "test5@test.com", "Barrett Wolf", "about me5", List.of())
         );
-        hostRepository.saveAll(hosts);
+        hosts.forEach(host -> hostRepository.findById(host.getId()).orElseGet(() -> hostRepository.save(host)));
     }
 }
