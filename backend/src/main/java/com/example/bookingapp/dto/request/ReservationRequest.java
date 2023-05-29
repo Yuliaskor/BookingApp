@@ -37,10 +37,14 @@ public record ReservationRequest(
                 listing,
                 checkInDate,
                 checkOutDate,
-                pricePerNight.multiply(BigDecimal.valueOf(numberOfGuests)),
+                pricePerNight.multiply(BigDecimal.valueOf(numberOfGuests)).multiply(getNumberOfNights()),
                 tenantName,
                 tenantEmail,
                 numberOfGuests
         );
+    }
+
+    private BigDecimal getNumberOfNights() {
+        return BigDecimal.valueOf(checkOutDate.toEpochDay() - checkInDate.toEpochDay() + 1);
     }
 }
