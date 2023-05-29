@@ -131,6 +131,9 @@ public class Listing {
     }
 
     private void checkCheckInDate(Reservation reservation) {
+        if (reservation.getCheckInDate().isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException("Reservation cannot be made for past dates");
+        }
         if (availableFrom != null && availableFrom.isAfter(reservation.getCheckInDate())) {
             throw new IllegalArgumentException(String.format("Check-in date for listing cannot be before %s", availableFrom));
         }
