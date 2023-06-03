@@ -11,6 +11,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -47,10 +48,10 @@ public class Listing {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private RoomType roomType;
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinTable(name = "listings_ratings", joinColumns = @JoinColumn(name = "listing_id"), inverseJoinColumns = @JoinColumn(name = "rating_id"))
     private List<Rating> ratings;
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "listings_reservations", joinColumns = @JoinColumn(name = "listing_id"), inverseJoinColumns = @JoinColumn(name = "reservation_id"))
     private List<Reservation> reservations;
     @ElementCollection
@@ -61,7 +62,7 @@ public class Listing {
     @ElementCollection
     @CollectionTable(name = "listings_amenities", joinColumns = @JoinColumn(name = "listing_id"))
     @Column(name = "amenity", nullable = false)
-    private List<String> amenities;
+    private List<String> amenities = new ArrayList<>();
 
     public Listing(String title, String description, LocationDTO location, BigDecimal pricePerNight, int maxGuests, LocalDate availableFrom, LocalDate availableTo, RoomType roomType, List<Bed> beds, List<String> amenities) {
         this.title = title;
@@ -96,5 +97,55 @@ public class Listing {
                 this.beds,
                 this.amenities
         );
+    }
+
+    public void addReservation(Reservation reservation) {
+        reservations.add(reservation);
+    }
+
+    public void checkIfReservationPossible(Reservation reservation) {
+        checkNumberOfGuests(reservation);
+        checkCheckInDate(reservation);
+        checkCheckoutDate(reservation);
+        checkIfNoOverlappingReservations(reservation);
+    }
+
+    private void checkIfNoOverlappingReservations(Reservation newReservation) {
+        reservations.stream()
+                .filter(reservation -> doesReservationOverlapWithAnother(newReservation, reservation))
+                .findFirst()
+                .ifPresent(r -> {
+                    throw new IllegalArgumentException("Reservation overlaps with another reservation");
+                });
+    }
+
+    private static boolean doesReservationOverlapWithAnother(Reservation newReservation, Reservation reservation) {
+        return (reservation.getCheckInDate().isBefore(newReservation.getCheckOutDate()) || reservation.getCheckInDate().isEqual(newReservation.getCheckOutDate()))
+                && (reservation.getCheckOutDate().isAfter(newReservation.getCheckInDate()) || reservation.getCheckOutDate().isEqual(newReservation.getCheckInDate()));
+    }
+
+    private void checkCheckoutDate(Reservation reservation) {
+        if (availableTo != null && availableTo.isBefore(reservation.getCheckOutDate())) {
+            throw new IllegalArgumentException(String.format("Check-out date for listing cannot be after %s", availableTo));
+        }
+    }
+
+    private void checkCheckInDate(Reservation reservation) {
+        if (reservation.getCheckInDate().isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException("Reservation cannot be made for past dates");
+        }
+        if (availableFrom != null && availableFrom.isAfter(reservation.getCheckInDate())) {
+            throw new IllegalArgumentException(String.format("Check-in date for listing cannot be before %s", availableFrom));
+        }
+    }
+
+    private void checkNumberOfGuests(Reservation reservation) {
+        if (maxGuests < reservation.getNumberOfGuests()) {
+            throw new IllegalArgumentException(String.format("Listing cannot accommodate %d guests", reservation.getNumberOfGuests()));
+        }
+    }
+
+    public void deleteReservation(Reservation reservation) {
+        reservations.remove(reservation);
     }
 }

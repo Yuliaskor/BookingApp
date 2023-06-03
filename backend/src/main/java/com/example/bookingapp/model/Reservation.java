@@ -35,12 +35,26 @@ public class Reservation {
     @Column(nullable = false)
     private int numberOfGuests;
 
+    public Reservation(Listing listing, LocalDate checkInDate, LocalDate checkOutDate, BigDecimal totalPrice, String tenantName, String tenantEmail, int numberOfGuests) {
+        this.listing = listing;
+        this.checkInDate = checkInDate;
+        this.checkOutDate = checkOutDate;
+        this.totalPrice = totalPrice;
+        this.tenantName = tenantName;
+        this.tenantEmail = tenantEmail;
+        this.numberOfGuests = numberOfGuests;
+    }
+
     public ReservationDTO toDTO() {
         return new ReservationDTO(
                 this.id,
                 this.listing.getId(),
+                this.tenantName,
+                this.tenantEmail,
+                this.totalPrice,
                 this.checkInDate,
-                this.checkOutDate
+                this.checkOutDate,
+                this.numberOfGuests
         );
     }
 }
