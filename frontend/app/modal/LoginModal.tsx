@@ -6,6 +6,9 @@ import Modal from './Modal';
 import Input from "../inputs/Input";
 import Heading from "../Heading";
 import Button from "../Button";
+import { FcGoogle } from "react-icons/fc";
+import { signIn } from 'next-auth/react';
+import { useRouter } from "next/navigation";
 import { 
     FieldValues, 
     SubmitHandler,
@@ -20,8 +23,8 @@ import { log } from "console";
 import useRegisterModal from "../hooks/useRegisterModal";
 
 const LoginModal = () => {
-
-    const registerModal = useRegisterModal();
+      const router = useRouter();
+    // const registerModal = useRegisterModal();
     const loginModal = useLoginModal();
     const [isLoading, setIsLoading] = useState(false);
 
@@ -38,34 +41,40 @@ const LoginModal = () => {
         },
       });
 
-      const onSubmit: SubmitHandler<FieldValues> = (data) => {
-        setIsLoading(true);
-    
-        axios.post('/api/login', data)
-        .then(() => {
-          toast.success('Logged in');
-          registerModal.onClose();
-        })
-        .catch((error) => {
-            console.log(data);
-          toast.error('Something Went Wrong');
-        })
-        .finally(() => {
-          setIsLoading(false);
-        })
-      }
+      const onSubmit: SubmitHandler<FieldValues> = 
+        (data) => {
+          setIsLoading(true);
 
-      const onToggle = useCallback(() => {
-        loginModal.onClose();
-        registerModal.onOpen();
-      }, [loginModal, registerModal])
+          signIn('credentials', { 
+            ...data, 
+            redirect: false,
+          })
+          .then((callback) => {
+            setIsLoading(false);
+
+            if (callback?.ok) {
+              toast.success('Logged in');
+              router.refresh();
+              loginModal.onClose();
+            }
+            
+            if (callback?.error) {
+              toast.error(callback.error);
+            }
+    });
+  }
+
+      // const onToggle = useCallback(() => {
+      //   loginModal.onClose();
+      //   registerModal.onOpen();
+      // }, [loginModal, registerModal])
       const bodyContent = (
         <div className="flex flex-col gap-4">
           <Heading
             title="Welcome back"
             subtitle="Login to your account!"
           />
-          <Input
+          {/* <Input
             id="email"
             label="Email"
             disabled={isLoading}
@@ -81,6 +90,12 @@ const LoginModal = () => {
             register={register}
             errors={errors}
             required
+          /> */}
+           <Button 
+            outline 
+            label="Continue with Google"
+            icon={FcGoogle}
+            onClick={() => signIn('google')}
           />
         </div>
       )
@@ -88,18 +103,19 @@ const LoginModal = () => {
       const footerContent = (
         <div className="flex flex-col gap-4 mt-3">
           <hr />
+         
           <div className="
           text-neutral-500 text-center mt-4 font-light">
-            <p>First time using Airbnb?
+            {/* <p>First time using Airbnb?
               <span 
-                onClick={onToggle} 
+                // onClick={onToggle} 
                 className="
                   text-neutral-800
                   cursor-pointer 
                   hover:underline
                 "
                 > Create an account</span>
-            </p>
+            </p> */}
           </div>
         </div>
       )

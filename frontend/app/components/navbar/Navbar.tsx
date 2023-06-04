@@ -5,8 +5,26 @@ import Container from "../Container";
 import Search from "./Search";
 import UserMenu from "./UserMenu";
 
+interface CurrentUser {
+  name?: string | null;
+  email?: string | null;
+  image?: string | null;
+  createdAt?: string | null;
+  updatedAt?: string | null;
+  emailVerified?: string | null;
+}
 
-const Navbar = () => {
+
+interface NavbarProps {
+  currentUser?: CurrentUser | null;
+}
+
+
+const Navbar: React.FC<NavbarProps> = ({
+  currentUser,
+}) => {
+  console.log("Navbar");
+  console.log(currentUser);
   return ( 
     <div className="fixed w-full bg-white z-10 shadow-sm">
       <div
@@ -28,7 +46,7 @@ const Navbar = () => {
         >
           <span></span>
           <Search />
-          <UserMenu />
+          <UserMenu currentUserA={currentUser}/>
         </div>
       </Container>
     </div>

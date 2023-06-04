@@ -33,8 +33,9 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
 
-need to install:
+## need to install:
 
+```bash
 npm install -D tailwindcss postcss autoprefixer
 npx tailwindcss init -p
 npm install react-icons
@@ -42,3 +43,5 @@ npm install zustand
 npm install axios
 npm install react-hook-form
 npm install react-hot-toast
+npm install query-string
+```

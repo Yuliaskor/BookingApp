@@ -2,28 +2,38 @@
 
 import { useCallback, useState } from "react";
 import { AiOutlineMenu } from "react-icons/ai";
-// import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
  import useLoginModal from "@/app/hooks/useLoginModal";
 import useRegisterModal from "@/app/hooks/useRegisterModal";
-// import useRentModal from "@/app/hooks/useRentModal";
+import useRentModal from "@/app/hooks/useRentModal";
+import { signOut } from "next-auth/react";
 // import { SafeUser } from "@/app/types";
 
 import MenuItem from "./MenuItem";
 import Avatar from "../Avatar";
 import LoginModal from "@/app/modal/LoginModal";
 
-interface UserMenuProps {
- // currentUser?: SafeUser | null
-  currentUser: null
+interface CurrentUser {
+  name?: string | null;
+  email?: string | null;
+  image?: string | null;
+  createdAt?: string | null;
+  updatedAt?: string | null;
+  emailVerified?: string | null;
 }
 
-const UserMenu= () => {
-  const router = useRouter();
+interface UserMenuProps {
+  currentUserA?: CurrentUser | null;
+}
+
+
+const UserMenu: React.FC<UserMenuProps> = ({
+  currentUserA
+}) => {
+//  console.log({currentUser});
 
    const loginModal = useLoginModal();
-  const registerModal = useRegisterModal();
-//   const rentModal = useRentModal();
+   const rentModal = useRentModal();
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -31,29 +41,35 @@ const UserMenu= () => {
     setIsOpen((value) => !value);
   }, []);
 
-//   const onRent = useCallback(() => {
-//     if (!currentUser) {
-//     //   return loginModal.onOpen();
-//     }
+  const onRent = useCallback(() => {
+    // if (!currentUser) {
+    //   return loginModal.onOpen();
+    // }
 
-//     rentModal.onOpen();
-//   }, [loginModal, rentModal, currentUser]);
+    rentModal.onOpen();
+  }, [loginModal, rentModal]);
+
 
   return ( 
     <div className="relative">
       <div className="flex flex-row items-center gap-3">
         <div 
-        //   onClick={onRent}
-        // onClick={() => {}}
+           onClick={onRent}
+        //  onClick={() => router.push('/user')}
           className="
-          md:block  
-          text-sm
-          font-semibold
-          py-3
-          px-4 
+            hidden
+            md:block
+            text-sm 
+            font-semibold 
+            py-3 
+            px-4 
+            rounded-full 
+            hover:bg-neutral-100 
+            transition 
+            cursor-pointer
           "
         >
-          User
+          User 
         </div>
         <div 
        onClick={toggleOpen}
@@ -97,24 +113,30 @@ const UserMenu= () => {
           "
         >
           <div className="flex flex-col cursor-pointer">
-             
+            {currentUserA ? (
               <>
               <MenuItem 
+                label="Logout" 
+               onClick={() => signOut()}
+          //  onClick={() => router.push('/properties')}
+              
+              />
+            </>
+             
+               ) : (
+                <>
+              {/* <MenuItem 
                   label="Sign up" 
                   onClick={registerModal.onOpen}
-                />
+                /> */}
                 <MenuItem 
                   label="Login" 
                   onClick={loginModal.onOpen}
                 />
                 <hr />
-                <MenuItem 
-                  label="Logout" 
-               //   onClick={() => signOut()}
-               onClick={() => router.push('/properties')}
-                
-                />
+               
               </> 
+                )}
           </div>
         </div>
       )}
