@@ -44,4 +44,9 @@ npm install axios
 npm install react-hook-form
 npm install react-hot-toast
 npm install query-string
+npm install world-countries
+npm install react-select
+npm install leaflet
+npm install -D @types/leaflet
+npm install react-leaflet
 ```

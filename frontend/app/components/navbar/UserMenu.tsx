@@ -23,12 +23,12 @@ interface CurrentUser {
 }
 
 interface UserMenuProps {
-  currentUserA?: CurrentUser | null;
+  currentUser?: CurrentUser | null;
 }
 
 
 const UserMenu: React.FC<UserMenuProps> = ({
-  currentUserA
+  currentUser
 }) => {
 //  console.log({currentUser});
 
@@ -42,12 +42,12 @@ const UserMenu: React.FC<UserMenuProps> = ({
   }, []);
 
   const onRent = useCallback(() => {
-    // if (!currentUser) {
-    //   return loginModal.onOpen();
-    // }
+    if (!currentUser) {
+      return loginModal.onOpen();
+    }
 
     rentModal.onOpen();
-  }, [loginModal, rentModal]);
+  }, [loginModal, rentModal, currentUser]);
 
 
   return ( 
@@ -69,7 +69,7 @@ const UserMenu: React.FC<UserMenuProps> = ({
             cursor-pointer
           "
         >
-          User 
+          Rent room
         </div>
         <div 
        onClick={toggleOpen}
@@ -113,7 +113,7 @@ const UserMenu: React.FC<UserMenuProps> = ({
           "
         >
           <div className="flex flex-col cursor-pointer">
-            {currentUserA ? (
+            {currentUser ? (
               <>
               <MenuItem 
                 label="Logout" 
