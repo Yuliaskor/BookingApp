@@ -18,6 +18,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,6 +26,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/listings")
+@CrossOrigin(origins = "http://localhost:3000")
 public class ListingController {
 
     private final ListingService listingService;
@@ -47,12 +49,14 @@ public class ListingController {
 
     @PutMapping("/{id}")
     @Operation(summary = "Update listing information", description = "Update listing information by id")
+    @PreAuthorize("isAuthenticated()")
     ResponseEntity<ListingDTO> updateListing(@PathVariable long id, @Valid @RequestBody ListingRequest listing) {
         return ResponseEntity.ok(listingService.updateListing(id, listing).toDTO());
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Delete listing", description = "Delete listing by id")
     void deleteListing(@PathVariable long id) {
         listingService.deleteListing(id);
