@@ -52,4 +52,10 @@ public class HostController {
                 .body(listingService.addListing(hostId, listing).toDTO());
     }
 
+    @PutMapping("/{id}")
+    @Operation(summary = "Update host information", description = "Update host information by id")
+    ResponseEntity<HostDTO> updateHost(@PathVariable long id, @Valid @RequestBody HostRequest host) {
+        return ResponseEntity.ok(hostService.updateHost(id, host).toDTO());
+    }
+
 }

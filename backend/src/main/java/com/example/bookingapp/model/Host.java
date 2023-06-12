@@ -1,5 +1,6 @@
 package com.example.bookingapp.model;
 
+import com.example.bookingapp.dto.request.HostRequest;
 import com.example.bookingapp.dto.response.HostDTO;
 import com.example.bookingapp.dto.response.ListingHostDTO;
 import jakarta.persistence.*;
@@ -61,5 +62,11 @@ public class Host {
 
     public void addListing(Listing listing) {
         this.listings.add(listing);
+    }
+
+    public void updateFromDTO(HostRequest hostRequest) {
+        this.email = hostRequest.email();
+        this.name = hostRequest.name();
+        this.aboutMe = hostRequest.aboutMe();
     }
 }
