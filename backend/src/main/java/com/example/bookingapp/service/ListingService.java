@@ -2,6 +2,8 @@ package com.example.bookingapp.service;
 
 import com.example.bookingapp.dto.request.ListingRequest;
 import com.example.bookingapp.dto.request.ReservationRequest;
+import com.example.bookingapp.email.EmailService;
+import com.example.bookingapp.email.ReservationConfirmation;
 import com.example.bookingapp.exceptions.listing.ListingNotFoundException;
 import com.example.bookingapp.exceptions.reservation.ReservationNotFoundException;
 import com.example.bookingapp.model.Host;
@@ -24,6 +26,7 @@ public class ListingService {
     private final ListingRepository listingRepository;
     private final HostService hostService;
     private final HostRepository hostRepository;
+    private final EmailService emailService;
 
     public Page<Listing> getListings(Pageable pageable) {
         return listingRepository.findAll(pageable);
@@ -55,6 +58,7 @@ public class ListingService {
         Reservation reservation = reservationDTO.toEntity(listing, listing.getPricePerNight());
         listing.checkIfReservationPossible(reservation);
         listing.addReservation(reservation);
+        sendConfirmationOfReservationEmail(reservationDTO, listing, reservation);
         return listingRepository.save(listing)
                 .getReservations()
                 .get(listing.getReservations().size() - 1);
@@ -92,5 +96,17 @@ public class ListingService {
                 .filter(r -> r.getId() == reservationId)
                 .findFirst()
                 .orElseThrow(() -> new ReservationNotFoundException(listingId, reservationId));
+    }
+
+    private void sendConfirmationOfReservationEmail(ReservationRequest reservationDTO, Listing listing, Reservation reservation) {
+        ReservationConfirmation confirmation = new ReservationConfirmation(
+                listing.getTitle(),
+                reservation.getTenantName(),
+                reservation.getTotalPrice(),
+                reservation.getCheckInDate(),
+                reservation.getCheckOutDate(),
+                reservation.getNumberOfGuests()
+        );
+        emailService.sendConfirmationOfReservation(reservationDTO.tenantEmail(), "Reservation confirmation", confirmation);
     }
 }
