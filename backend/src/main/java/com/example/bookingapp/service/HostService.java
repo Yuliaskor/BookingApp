@@ -32,4 +32,13 @@ public class HostService {
         }
         hostRepository.deleteById(id);
     }
+
+    public Host updateHost(long id, HostRequest hostDTO) {
+        Host host = getHostById(id);
+        if (hostRepository.existsByEmail(hostDTO.email())) {
+            throw new HostAlreadyExistsException(hostDTO.email());
+        }
+        host.updateFromDTO(hostDTO);
+        return hostRepository.save(host);
+    }
 }
