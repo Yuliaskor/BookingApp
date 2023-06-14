@@ -1,6 +1,7 @@
 package com.example.bookingapp.model;
 
 import com.example.bookingapp.dto.LocationDTO;
+import com.example.bookingapp.dto.request.ListingRequest;
 import com.example.bookingapp.dto.response.ListingDTO;
 import com.example.bookingapp.enums.Bed;
 import com.example.bookingapp.enums.RoomType;
@@ -145,4 +146,16 @@ public class Listing {
         }
     }
 
+    public void update(ListingRequest listing) {
+        this.title = listing.title();
+        this.description = listing.description();
+        this.location = listing.location().toEntity();
+        this.pricePerNight = listing.pricePerNight();
+        this.maxGuests = listing.maxGuests();
+        this.availableFrom = listing.availableFrom();
+        this.availableTo = listing.availableTo();
+        this.roomType = listing.roomType();
+        this.beds = listing.beds();
+        this.amenities = listing.amenities();
+    }
 }
