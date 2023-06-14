@@ -145,7 +145,4 @@ public class Listing {
         }
     }
 
-    public void deleteReservation(Reservation reservation) {
-        reservations.remove(reservation);
-    }
 }

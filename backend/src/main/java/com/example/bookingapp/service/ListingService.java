@@ -5,7 +5,6 @@ import com.example.bookingapp.dto.request.ReservationRequest;
 import com.example.bookingapp.email.EmailService;
 import com.example.bookingapp.email.ReservationConfirmation;
 import com.example.bookingapp.exceptions.listing.ListingNotFoundException;
-import com.example.bookingapp.exceptions.reservation.ReservationNotFoundException;
 import com.example.bookingapp.model.Host;
 import com.example.bookingapp.model.Listing;
 import com.example.bookingapp.model.Reservation;
@@ -72,30 +71,6 @@ public class ListingService {
 
     public List<Reservation> getReservationsByListingId(long listingId) {
         return getListingById(listingId).getReservations();
-    }
-
-    public void deleteReservationFromListing(long listingId, long reservationId) {
-        Listing listing = getListingById(listingId);
-        Reservation reservation = findReservationInListing(listingId, reservationId, listing);
-        checkIfReservationCanBeDeleted(reservation);
-        listing.deleteReservation(reservation);
-        listingRepository.save(listing);
-    }
-
-    private void checkIfReservationCanBeDeleted(Reservation reservation) {
-        if (reservation.getCheckInDate().isEqual(LocalDate.now()) || reservation.getCheckInDate().isBefore(LocalDate.now())) {
-            throw new IllegalArgumentException(
-                    "Reservation with id " + reservation.getId() + " cannot be cancelled because it has already started or has already ended"
-            );
-        }
-    }
-
-    private Reservation findReservationInListing(long listingId, long reservationId, Listing listing) {
-        return listing.getReservations()
-                .stream()
-                .filter(r -> r.getId() == reservationId)
-                .findFirst()
-                .orElseThrow(() -> new ReservationNotFoundException(listingId, reservationId));
     }
 
     private void sendConfirmationOfReservationEmail(ReservationRequest reservationDTO, Listing listing, Reservation reservation) {
