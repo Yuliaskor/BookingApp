@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -37,6 +38,7 @@ public class ListingService {
 
     public Listing addListing(int hostId, ListingRequest listingRequest) {
         Host host = hostService.getHostById(hostId);
+        checkPhotos(listingRequest);
         Listing listing = listingRequest.toEntity();
         listing.setHost(host);
         host.addListing(listing);
@@ -69,6 +71,13 @@ public class ListingService {
         }
     }
 
+    public Listing updateListing(long id, ListingRequest listing) {
+        checkPhotos(listing);
+        Listing listingToUpdate = getListingById(id);
+        listingToUpdate.update(listing);
+        return listingRepository.save(listingToUpdate);
+    }
+
     public List<Reservation> getReservationsByListingId(long listingId) {
         return getListingById(listingId).getReservations();
     }
@@ -85,9 +94,13 @@ public class ListingService {
         emailService.sendConfirmationOfReservation(reservationDTO.tenantEmail(), "Reservation confirmation", confirmation);
     }
 
-    public Listing updateListing(long id, ListingRequest listing) {
-        Listing listingToUpdate = getListingById(id);
-        listingToUpdate.update(listing);
-        return listingRepository.save(listingToUpdate);
+    private void checkPhotos(ListingRequest listing) {
+        for (String photo : listing.photos()) {
+            try {
+                URI.create(photo).toURL();
+            } catch (Exception e) {
+                throw new IllegalArgumentException("'" + photo + "' is invalid url");
+            }
+        }
     }
 }

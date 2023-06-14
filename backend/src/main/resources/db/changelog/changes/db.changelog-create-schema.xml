@@ -2,7 +2,7 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
-    <changeSet author="boonku (generated)" id="1685651202534-1">
+    <changeSet author="boonku (generated)" id="1686776055443-1">
         <createTable tableName="host_listings">
             <column name="host_id" type="BIGINT">
                 <constraints nullable="false"/>
@@ -12,7 +12,7 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="boonku (generated)" id="1685651202534-2">
+    <changeSet author="boonku (generated)" id="1686776055443-2">
         <createTable tableName="hosts">
             <column autoIncrement="true" name="host_id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true"/>
@@ -28,17 +28,26 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="boonku (generated)" id="1685651202534-3">
+    <changeSet author="boonku (generated)" id="1686776055443-3">
         <createTable tableName="listings">
             <column autoIncrement="true" name="listing_id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
             <column name="available_from" type="date"/>
             <column name="available_to" type="date"/>
+            <column name="category" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
             <column name="description" type="TEXT">
                 <constraints nullable="false"/>
             </column>
             <column name="max_guests" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="number_of_bathrooms" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="number_of_rooms" type="INT">
                 <constraints nullable="false"/>
             </column>
             <column name="price_per_night" type="DECIMAL(38, 2)">
@@ -58,7 +67,7 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="boonku (generated)" id="1685651202534-4">
+    <changeSet author="boonku (generated)" id="1686776055443-4">
         <createTable tableName="listings_amenities">
             <column name="listing_id" type="BIGINT">
                 <constraints nullable="false"/>
@@ -68,17 +77,7 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="boonku (generated)" id="1685651202534-5">
-        <createTable tableName="listings_beds">
-            <column name="listing_id" type="BIGINT">
-                <constraints nullable="false"/>
-            </column>
-            <column name="bed" type="VARCHAR(255)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-    </changeSet>
-    <changeSet author="boonku (generated)" id="1685651202534-6">
+    <changeSet author="boonku (generated)" id="1686776055443-5">
         <createTable tableName="listings_ratings">
             <column name="listing_id" type="BIGINT">
                 <constraints nullable="false"/>
@@ -88,7 +87,7 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="boonku (generated)" id="1685651202534-7">
+    <changeSet author="boonku (generated)" id="1686776055443-6">
         <createTable tableName="listings_reservations">
             <column name="listing_id" type="BIGINT">
                 <constraints nullable="false"/>
@@ -98,7 +97,7 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="boonku (generated)" id="1685651202534-8">
+    <changeSet author="boonku (generated)" id="1686776055443-7">
         <createTable tableName="locations">
             <column autoIncrement="true" name="location_id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true"/>
@@ -120,7 +119,7 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="boonku (generated)" id="1685651202534-9">
+    <changeSet author="boonku (generated)" id="1686776055443-8">
         <createTable tableName="photos">
             <column name="listing_id" type="BIGINT">
                 <constraints nullable="false"/>
@@ -128,7 +127,7 @@
             <column name="photo_url" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <changeSet author="boonku (generated)" id="1685651202534-10">
+    <changeSet author="boonku (generated)" id="1686776055443-9">
         <createTable tableName="ratings">
             <column autoIncrement="true" name="rating_id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true"/>
@@ -150,7 +149,7 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="boonku (generated)" id="1685651202534-11">
+    <changeSet author="boonku (generated)" id="1686776055443-10">
         <createTable tableName="reservations">
             <column autoIncrement="true" name="reservation_id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true"/>
@@ -178,93 +177,85 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="boonku (generated)" id="1685651202534-12">
-        <createIndex indexName="FK1fkjmk20aki2o1g4jl00fuxf5" tableName="listings_beds">
-            <column name="listing_id"/>
-        </createIndex>
-    </changeSet>
-    <changeSet author="boonku (generated)" id="1685651202534-13">
+    <changeSet author="boonku (generated)" id="1686776055443-11">
         <createIndex indexName="FK1st61dtpk5x6fly8ejwyrr9ht" tableName="listings_reservations">
             <column name="listing_id"/>
         </createIndex>
     </changeSet>
-    <changeSet author="boonku (generated)" id="1685651202534-14">
+    <changeSet author="boonku (generated)" id="1686776055443-12">
         <createIndex indexName="FK2ji7gxwxcrr5cxvay8v40ea3p" tableName="listings_ratings">
             <column name="listing_id"/>
         </createIndex>
     </changeSet>
-    <changeSet author="boonku (generated)" id="1685651202534-15">
+    <changeSet author="boonku (generated)" id="1686776055443-13">
         <createIndex indexName="FK8mfemqwefccem1nsmqfak8gp7" tableName="listings">
             <column name="host_id"/>
         </createIndex>
     </changeSet>
-    <changeSet author="boonku (generated)" id="1685651202534-16">
+    <changeSet author="boonku (generated)" id="1686776055443-14">
         <createIndex indexName="FKdo9axxonynneh5bq1ufbmlroa" tableName="host_listings">
             <column name="host_id"/>
         </createIndex>
     </changeSet>
-    <changeSet author="boonku (generated)" id="1685651202534-17">
+    <changeSet author="boonku (generated)" id="1686776055443-15">
         <createIndex indexName="FKh8karq8dt31e8695khddw3alh" tableName="photos">
             <column name="listing_id"/>
         </createIndex>
     </changeSet>
-    <changeSet author="boonku (generated)" id="1685651202534-18">
+    <changeSet author="boonku (generated)" id="1686776055443-16">
         <createIndex indexName="FKiseqvb9ib6w6e8n52d6v9lmsy" tableName="reservations">
             <column name="listing_id"/>
         </createIndex>
     </changeSet>
-    <changeSet author="boonku (generated)" id="1685651202534-19">
+    <changeSet author="boonku (generated)" id="1686776055443-17">
         <createIndex indexName="FKldnyixeglmu9jfwpb9oedddev" tableName="listings_amenities">
             <column name="listing_id"/>
         </createIndex>
     </changeSet>
-    <changeSet author="boonku (generated)" id="1685651202534-20">
+    <changeSet author="boonku (generated)" id="1686776055443-18">
         <createIndex indexName="FKln4xeugpsjbxxai34dv5eyqfw" tableName="listings">
             <column name="location_id"/>
         </createIndex>
     </changeSet>
-    <changeSet author="boonku (generated)" id="1685651202534-21">
+    <changeSet author="boonku (generated)" id="1686776055443-19">
         <createIndex indexName="FKs0lbdmxfflb32arnw1uvdodtl" tableName="ratings">
             <column name="listing_id"/>
         </createIndex>
     </changeSet>
-    <changeSet author="boonku (generated)" id="1685651202534-22">
-        <addForeignKeyConstraint baseColumnNames="listing_id" baseTableName="listings_beds" constraintName="FK1fkjmk20aki2o1g4jl00fuxf5" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="listing_id" referencedTableName="listings" validate="true"/>
-    </changeSet>
-    <changeSet author="boonku (generated)" id="1685651202534-23">
+    <changeSet author="boonku (generated)" id="1686776055443-20">
         <addForeignKeyConstraint baseColumnNames="listing_id" baseTableName="listings_reservations" constraintName="FK1st61dtpk5x6fly8ejwyrr9ht" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="listing_id" referencedTableName="listings" validate="true"/>
     </changeSet>
-    <changeSet author="boonku (generated)" id="1685651202534-24">
+    <changeSet author="boonku (generated)" id="1686776055443-21">
         <addForeignKeyConstraint baseColumnNames="listing_id" baseTableName="listings_ratings" constraintName="FK2ji7gxwxcrr5cxvay8v40ea3p" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="listing_id" referencedTableName="listings" validate="true"/>
     </changeSet>
-    <changeSet author="boonku (generated)" id="1685651202534-25">
+    <changeSet author="boonku (generated)" id="1686776055443-22">
         <addForeignKeyConstraint baseColumnNames="listing_id" baseTableName="host_listings" constraintName="FK2q9g35p839y3fiq7qf12u40ua" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="listing_id" referencedTableName="listings" validate="true"/>
     </changeSet>
-    <changeSet author="boonku (generated)" id="1685651202534-26">
+    <changeSet author="boonku (generated)" id="1686776055443-23">
         <addForeignKeyConstraint baseColumnNames="rating_id" baseTableName="listings_ratings" constraintName="FK5or15n6jb6ojrvkplpc589a81" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="rating_id" referencedTableName="ratings" validate="true"/>
     </changeSet>
-    <changeSet author="boonku (generated)" id="1685651202534-27">
+    <changeSet author="boonku (generated)" id="1686776055443-24">
         <addForeignKeyConstraint baseColumnNames="host_id" baseTableName="listings" constraintName="FK8mfemqwefccem1nsmqfak8gp7" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="host_id" referencedTableName="hosts" validate="true"/>
     </changeSet>
-    <changeSet author="boonku (generated)" id="1685651202534-28">
+    <changeSet author="boonku (generated)" id="1686776055443-25">
         <addForeignKeyConstraint baseColumnNames="reservation_id" baseTableName="listings_reservations" constraintName="FK9km4n9gdorwig75hlx7hg12w8" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="reservation_id" referencedTableName="reservations" validate="true"/>
     </changeSet>
-    <changeSet author="boonku (generated)" id="1685651202534-29">
+    <changeSet author="boonku (generated)" id="1686776055443-26">
         <addForeignKeyConstraint baseColumnNames="host_id" baseTableName="host_listings" constraintName="FKdo9axxonynneh5bq1ufbmlroa" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="host_id" referencedTableName="hosts" validate="true"/>
     </changeSet>
-    <changeSet author="boonku (generated)" id="1685651202534-30">
+    <changeSet author="boonku (generated)" id="1686776055443-27">
         <addForeignKeyConstraint baseColumnNames="listing_id" baseTableName="photos" constraintName="FKh8karq8dt31e8695khddw3alh" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="listing_id" referencedTableName="listings" validate="true"/>
     </changeSet>
-    <changeSet author="boonku (generated)" id="1685651202534-31">
+    <changeSet author="boonku (generated)" id="1686776055443-28">
         <addForeignKeyConstraint baseColumnNames="listing_id" baseTableName="reservations" constraintName="FKiseqvb9ib6w6e8n52d6v9lmsy" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="listing_id" referencedTableName="listings" validate="true"/>
     </changeSet>
-    <changeSet author="boonku (generated)" id="1685651202534-32">
+    <changeSet author="boonku (generated)" id="1686776055443-29">
         <addForeignKeyConstraint baseColumnNames="listing_id" baseTableName="listings_amenities" constraintName="FKldnyixeglmu9jfwpb9oedddev" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="listing_id" referencedTableName="listings" validate="true"/>
     </changeSet>
-    <changeSet author="boonku (generated)" id="1685651202534-33">
+    <changeSet author="boonku (generated)" id="1686776055443-30">
         <addForeignKeyConstraint baseColumnNames="location_id" baseTableName="listings" constraintName="FKln4xeugpsjbxxai34dv5eyqfw" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="location_id" referencedTableName="locations" validate="true"/>
     </changeSet>
-    <changeSet author="boonku (generated)" id="1685651202534-34">
+    <changeSet author="boonku (generated)" id="1686776055443-31">
         <addForeignKeyConstraint baseColumnNames="listing_id" baseTableName="ratings" constraintName="FKs0lbdmxfflb32arnw1uvdodtl" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="listing_id" referencedTableName="listings" validate="true"/>
     </changeSet>
 </databaseChangeLog>
