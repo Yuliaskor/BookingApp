@@ -1,7 +1,7 @@
 package com.example.bookingapp.dto.request;
 
 import com.example.bookingapp.dto.LocationDTO;
-import com.example.bookingapp.enums.Bed;
+import com.example.bookingapp.enums.Category;
 import com.example.bookingapp.enums.RoomType;
 import com.example.bookingapp.model.Listing;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -25,6 +25,8 @@ public record ListingRequest(
         @NotNull(message = "Location must not be null")
         @Schema(description = "listing location")
         LocationDTO location,
+        @Schema(description = "listing photos", example = "[\"https://image.com/1\", \"https://image.com/2\", \"https://image.com/3\"]")
+        List<String> photos,
         @NotNull
         @DecimalMin(value = "0.0", inclusive = false, message ="Price per night must be greater than 0")
         @Schema(description = "listing price per night", example = "100.00")
@@ -42,12 +44,20 @@ public record ListingRequest(
         @NotNull(message = "Room type must not be null")
         @Schema(description = "listing room type", example = "ENTIRE_PLACE")
         RoomType roomType,
-        @NotNull(message = "Beds must not be null")
-        @Schema(description = "listing beds", example = "[\"SINGLE_BED\", \"DOUBLE_BED\"]")
-        List<Bed> beds,
+        @NotNull(message = "Number of rooms must not be null")
+        @Min(value = 1, message = "Number of rooms must be greater than 0")
+        @Schema(description = "listing number of rooms", example = "2")
+        Integer numberOfRooms,
+        @NotNull(message = "Number of bathrooms must not be null")
+        @Min(value = 1, message = "Number of bathrooms must be greater than 0")
+        @Schema(description = "listing number of bathrooms", example = "1")
+        Integer numberOfBathrooms,
         @NotNull(message = "Amenities must not be null")
         @Schema(description = "listing amenities", example = "[\"WIFI\", \"TV\"]")
-        List<String> amenities
+        List<String> amenities,
+        @NotNull(message = "Category must not be null")
+        @Schema(description = "listing category", example = "BEACH")
+        Category category
 ) {
     public Listing toEntity() {
         return new Listing(
@@ -59,8 +69,10 @@ public record ListingRequest(
                 availableFrom,
                 availableTo,
                 roomType,
-                beds,
-                amenities
+                numberOfRooms,
+                numberOfBathrooms,
+                amenities,
+                category
         );
     }
 }

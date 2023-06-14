@@ -86,7 +86,7 @@
                 <version>4.22.0</version>
                 <configuration>
                     <driver>com.mysql.cj.jdbc.Driver</driver>
-                    <url>jdbc:mysql://localhost:3306/db</url>
+                    <url>jdbc:mysql://localhost:3306/bookingapp</url>
                     <username>root</username>
                     <password>root</password>
                     <changeLogFile>src/main/resources/db/changelog/db.changelog-master.xml</changeLogFile>

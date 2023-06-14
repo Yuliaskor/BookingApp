@@ -1,7 +1,6 @@
 package com.example.bookingapp.dto.response;
 
 import com.example.bookingapp.dto.LocationDTO;
-import com.example.bookingapp.enums.Bed;
 import com.example.bookingapp.enums.RoomType;
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -20,7 +19,7 @@ public record ListingDTO(
         String description,
         @Schema(description = "listing location")
         LocationDTO location,
-        @Schema(description = "listing photos", example = "url1, url2, url3")
+        @Schema(description = "listing photos", example = "[\"https://image.com/1\", \"https://image.com/2\", \"https://image.com/3\"]")
         List<String> photos,
         @Schema(description = "listing price per night", example = "100.00")
         BigDecimal pricePerNight,
@@ -34,9 +33,13 @@ public record ListingDTO(
         RoomType roomType,
         @Schema(description = "listing reservations")
         List<ReservationDTO> reservations,
-        @Schema(description = "listing beds", example = "[\"SINGLE_BED\", \"DOUBLE_BED\"]")
-        List<Bed> beds,
+        @Schema(description = "listing number of rooms", example = "2")
+        int numberOfRooms,
+        @Schema(description = "listing number of bathrooms", example = "1")
+        int numberOfBathrooms,
         @Schema(description = "listing amenities", example = "[\"WIFI\", \"TV\"]")
-        List<String> amenities
+        List<String> amenities,
+        @Schema(description = "listing category", example = "Beach")
+        String category
 ) {
 }
