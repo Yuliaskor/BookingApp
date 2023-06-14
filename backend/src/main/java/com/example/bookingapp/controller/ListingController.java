@@ -1,5 +1,6 @@
 package com.example.bookingapp.controller;
 
+import com.example.bookingapp.dto.request.ListingRequest;
 import com.example.bookingapp.dto.request.ReservationRequest;
 import com.example.bookingapp.dto.response.ListingDTO;
 import com.example.bookingapp.dto.response.ReservationDTO;
@@ -40,6 +41,12 @@ public class ListingController {
     @Operation(summary = "Get listing", description = "Get listing by id")
     ResponseEntity<ListingDTO> getListing(@PathVariable long id) {
         return ResponseEntity.ok(listingService.getListingById(id).toDTO());
+    }
+
+    @PutMapping("/{id}")
+    @Operation(summary = "Update listing information", description = "Update listing information by id")
+    ResponseEntity<ListingDTO> updateListing(@PathVariable long id, @Valid @RequestBody ListingRequest listing) {
+        return ResponseEntity.ok(listingService.updateListing(id, listing).toDTO());
     }
 
     @DeleteMapping("/{id}")

@@ -84,4 +84,10 @@ public class ListingService {
         );
         emailService.sendConfirmationOfReservation(reservationDTO.tenantEmail(), "Reservation confirmation", confirmation);
     }
+
+    public Listing updateListing(long id, ListingRequest listing) {
+        Listing listingToUpdate = getListingById(id);
+        listingToUpdate.update(listing);
+        return listingRepository.save(listingToUpdate);
+    }
 }
