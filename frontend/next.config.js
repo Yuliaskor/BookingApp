@@ -8,4 +8,7 @@ const nextConfig = {
 module.exports = {
   nextConfig,
   output: 'standalone',
+  images: {
+    domains: ['res.cloudinary.com'],
+  },
 }

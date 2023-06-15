@@ -91,12 +91,12 @@ const RentModel = () => {
         if (step !== STEPS.PRICE) {
           return onNext();
         }
-        
         setIsLoading(true);
     
         axios.post('/api/listings', data)
         .then(() => {
           toast.success('Listing created!');
+          
           router.refresh();
           reset();
           setStep(STEPS.CATEGORY)
