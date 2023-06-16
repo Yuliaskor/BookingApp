@@ -6,13 +6,6 @@ import { useCallback, useMemo } from "react";
 import { format } from 'date-fns';
 
 import useCountries from "@/app/hooks/useCountries";
-// import { 
-//   SafeListing, 
-//   SafeReservation, 
-//   SafeUser 
-// } from "@/app/types";
-
-
 
 import HeartButton from "../HeartButton";
 import Button from "@/app/Button";
@@ -80,6 +73,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
 }) => {
   const router = useRouter();
   const { getByValue } = useCountries();
+  console.log(data);
 
   const location = getByValue(data.locationValue);
 
@@ -137,8 +131,9 @@ const ListingCard: React.FC<ListingCardProps> = ({
               group-hover:scale-110 
               transition
             "
-           // src={data.imageSrc}
-           src="https://res.cloudinary.com/dovtmuel7/image/upload/v1685968009/qhzkhlj5iwm1keyayomb.jpg"
+          //  src={data.imageSrc[0]}
+        
+           src="https://res.cloudinary.com/dovtmuel7/image/upload/v1686949278/av5lwqefqsjrt3wxtj7r.webp"
             alt="Listing"
           />
           <div className="
@@ -149,12 +144,12 @@ const ListingCard: React.FC<ListingCardProps> = ({
           </div>
         </div>
         <div className="font-semibold text-lg">
-          {/* {location?.country}, {location?.label} */}
-          Country, label
+        {data.title}
         </div>
         <div className="font-light text-neutral-500">
-          {/* {reservationDate || data.category} */}
-          Countrisyde
+        {data.location?.country}, {data.location?.city} 
+        <br/>
+        {data.category}
         </div>
         <div className="flex flex-row items-center gap-1">
           <div className="font-semibold">

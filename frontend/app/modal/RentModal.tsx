@@ -21,6 +21,21 @@ import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 
+import { FaWifi, FaTv, FaUtensils, FaSwimmingPool, FaParking, FaDumbbell } from 'react-icons/fa';
+import AmenityBox from "../inputs/AmenityBox";
+
+const token = '794839251456-c6sna97nt0qh1i31l3f2h9ksj9j5s6eo.apps.googleusercontent.com';
+
+
+const amenities = [
+    { label: 'Wifi', icon: FaWifi },
+    { label: 'TV', icon: FaTv },
+    { label: 'Kitchen', icon: FaUtensils },
+    { label: 'Pool', icon: FaSwimmingPool },
+    { label: 'Parking', icon: FaParking },
+    { label: 'Gym', icon: FaDumbbell },
+];
+
 enum STEPS {
     CATEGORY = 0,
     LOCATION = 1,
@@ -28,6 +43,7 @@ enum STEPS {
     IMAGES = 3,
     DESCRIPTION = 4,
     PRICE = 5,
+    AMENITIES = 6,
   }
 
 const RentModel = () => {
@@ -35,6 +51,9 @@ const RentModel = () => {
     const rentModal = useRentModal();
     const [step, setStep] = useState(STEPS.CATEGORY);
     const [isLoading, setIsLoading] = useState(false);
+    const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
+
+
 
     const { 
         register, 
@@ -56,6 +75,7 @@ const RentModel = () => {
           price: 1,
           title: '',
           description: '',
+          amenities: [],
         }
       });
     
@@ -88,36 +108,53 @@ const RentModel = () => {
       }
 
       const onSubmit: SubmitHandler<FieldValues> = (data) => {
-        if (step !== STEPS.PRICE) {
+        if (step !== STEPS.AMENITIES) {
           return onNext();
         }
-        console.log(data);
+        // console.log(data);
+        // console.log(category);
+        // console.log()
         setIsLoading(true);
 
         const hostId = 1;
+
+        const photoList = [];
+        photoList.push(data.imageSrc);
+
+        const upperCaseCategory = data.category.toUpperCase();
       
         // Adjust the data object to match the structure the API is expecting
         const postData = {
-          title: data.category,
+          title: data.title,
           description: data.description,
           location: {
-            latitude: data.location.lat,
-            longitude: data.location.lng,
-            city: data.location.city,
-            country: data.location.country,
-            description: data.location.description,
+            latitude: data.location.latlng[0],
+            longitude: data.location.latlng[1],
+            city: data.location.label,
+            country: data.location.region,
+            description: data.location.value,
           },
-          pricePerNight: data.pricePerNight,
+          photos: photoList,
+          pricePerNight: parseInt(data.price),
           maxGuests: data.guestCount,
-          availableFrom: data.availableFrom,
-          availableTo: data.availableTo,
-          roomType: data.roomType,
-          beds: data.roomCount,
-          amenities: data.bathroomCount,
-          photos: data.imageSrc
+          availableFrom: "2021-01-01",
+          availableTo: "2023-01-01",
+          roomType: "ENTIRE_PLACE",
+          numberOfRooms: data.roomCount,
+          numberOfBathrooms: 1,
+          amenities: selectedAmenities,
+          category: upperCaseCategory,
+
         };
+
+        console.log(postData);
       
-        axios.post(`/api/v1/hosts/${hostId}/listings`, postData)
+        axios.post(`http://localhost:8080/api/v1/hosts/${hostId}/listings`, postData, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        })
           .then(() => {
             toast.success('Listing created!');
       
@@ -135,7 +172,7 @@ const RentModel = () => {
       }      
 
       const actionLabel = useMemo(() => {
-        if (step === STEPS.PRICE) {
+        if (step === STEPS.AMENITIES) {
           return 'Create'
         }
     
@@ -291,6 +328,47 @@ const RentModel = () => {
           </div>
         )
       }
+
+      if (step === STEPS.AMENITIES) {
+        bodyContent = (
+            <div className="flex flex-col gap-8">
+                <Heading
+                    title="What amenities do you offer?"
+                    subtitle="Select all that apply"
+                />
+                <div 
+                  className="
+                    grid 
+                    grid-cols-1 
+                    md:grid-cols-2 
+                    gap-3
+                    max-h-[50vh]
+                    overflow-y-auto
+                  "
+                >
+                    {amenities.map((amenity, index) => (
+                    // <div key={index}>
+                      
+                      <AmenityBox 
+                          icon={amenity.icon}  // I'm assuming each amenity has an icon here
+                          label={amenity.label} 
+                          selected={selectedAmenities.includes(amenity.label)} 
+                          onClick={(amenityLabel) => {
+                              if(selectedAmenities.includes(amenityLabel)){
+                                  setSelectedAmenities(selectedAmenities.filter(a => a !== amenityLabel));
+                              } else {
+                                  setSelectedAmenities([...selectedAmenities, amenityLabel]);
+                              }
+                          }} 
+                      />
+                    // </div>
+                ))}
+                </div>
+            
+            </div>
+        )
+    }
+    
 
     return (
 

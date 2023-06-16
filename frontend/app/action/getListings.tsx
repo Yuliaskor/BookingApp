@@ -44,12 +44,46 @@ interface IListing {
   [key: string]: any;
 }
 
-export default async function getListings() {
+export default async function getListings(params: IListingsParams) {
   try {
+
+    const {
+      userId,
+      roomCount, 
+      guestCount, 
+      bathroomCount, 
+      locationValue,
+      startDate,
+      endDate,
+      category,
+    } = params;
+
+    
     // Replace with your API URL
     const response = await axios.get('http://localhost:8080/api/v1/listings');
 
-    const listings = response.data.content;
+    let listings = response.data.content;
+
+    if (category) {
+      listings = listings.filter((listing: IListing) => listing.category === category);
+    }
+
+    if (roomCount) {
+      listings = listings.filter((listing: IListing)  => listing.numberOfRooms >= roomCount);
+    }
+
+    if (guestCount) {
+      listings = listings.filter((listing: IListing)  => listing.maxGuests >= guestCount);
+    }
+
+    if (bathroomCount) {
+      listings = listings.filter((listing: IListing)  => listing.numberOfBathrooms >= bathroomCount);
+    }
+
+    if (locationValue) {
+      listings = listings.filter((listing: IListing)  => listing.location?.description === locationValue);
+    }
+
 
     // Sort by createdAt in descending order
     const safeListings = listings.map((listing: IListing) => ({

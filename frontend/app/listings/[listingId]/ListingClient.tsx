@@ -7,13 +7,12 @@ import { Range } from "react-date-range";
 import { useRouter } from "next/navigation";
 import { differenceInDays, eachDayOfInterval } from 'date-fns';
 
-import useLoginModal from "@/app/hooks/useLoginModal";
-
 import Container from "@/app/components/Container";
 import { categories } from "@/app/components/navbar/Categories";
 import ListingHead from "@/app/components/listings/ListingHead";
 import ListingInfo from "@/app/components/listings/ListingInfo";
 import ListingReservation from "@/app/components/listings/ListingReservation";
+import useReserveModal from "@/app/hooks/useReserveModal";
 
 const initialDateRange = {
   startDate: new Date(),
@@ -75,8 +74,9 @@ const ListingClient: React.FC<ListingClientProps> = ({
  // reservations = [],
 //  currentUser
 }) => {
-  const loginModal = useLoginModal();
+  const reserveModal = useReserveModal();
   const router = useRouter();
+  console.log(listing);
  
 
 //   const disabledDates = useMemo(() => {
@@ -100,13 +100,11 @@ const ListingClient: React.FC<ListingClientProps> = ({
   }, [listing.category]);
 
   const [isLoading, setIsLoading] = useState(false);
-  const [totalPrice, setTotalPrice] = useState(listing.price);
+  const [totalPrice, setTotalPrice] = useState(listing.pricePerNight);
   const [dateRange, setDateRange] = useState<Range>(initialDateRange);
 
   const onCreateReservation = useCallback(() => {
-    //   if (!currentUser) {
-    //     return loginModal.onOpen();
-    //   }
+
       setIsLoading(true);
 
       axios.post('/api/reservations', {
@@ -133,7 +131,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
     listing?.id,
     router,
    // currentUser,
-    loginModal
+    reserveModal
   ]);
 
   useEffect(() => {
@@ -143,13 +141,13 @@ const ListingClient: React.FC<ListingClientProps> = ({
         dateRange.startDate
       );
       
-      if (dayCount && listing.price) {
-        setTotalPrice(dayCount * listing.price);
+      if (dayCount && listing.pricePerNight) {
+        setTotalPrice(dayCount * listing.pricePerNight);
       } else {
-        setTotalPrice(listing.price);
+        setTotalPrice(listing.pricePerNight);
       }
     }
-  }, [dateRange, listing.price]);
+  }, [dateRange, listing.pricePerNight]);
 
   return ( 
     <Container>
@@ -162,8 +160,8 @@ const ListingClient: React.FC<ListingClientProps> = ({
         <div className="flex flex-col gap-6">
           <ListingHead
             title={listing.title}
-            imageSrc={listing.imageSrc}
-            locationValue={listing.locationValue}
+            imageSrc={"https://res.cloudinary.com/dovtmuel7/image/upload/v1685968009/qhzkhlj5iwm1keyayomb.jpg"}
+            locationValue = {listing.location?.description}
             id={listing.id.toString()}
          //   currentUser={currentUser}
           />
@@ -180,9 +178,9 @@ const ListingClient: React.FC<ListingClientProps> = ({
               user={listing.user}
               category={category}
               description={listing.description}
-              roomCount={listing.roomCount}
-              guestCount={listing.guestCount}
-              bathroomCount={listing.bathroomCount}
+              roomCount={listing.numberOfRooms}
+              guestCount={listing.maxGuests}
+              bathroomCount={listing.numberOfBathrooms}
               locationValue={listing.locationValue}
             />
             <div 
@@ -194,11 +192,11 @@ const ListingClient: React.FC<ListingClientProps> = ({
               "
             >
               <ListingReservation
-                price={listing.price}
+                price={listing.pricePerNight}
                 totalPrice={totalPrice}
                 onChangeDate={(value) => setDateRange(value)}
                 dateRange={dateRange}
-                onSubmit={onCreateReservation}
+                onSubmit={reserveModal.onOpen}
                 disabled={isLoading}
                // disabledDates={disabledDates}
               />
