@@ -91,24 +91,48 @@ const RentModel = () => {
         if (step !== STEPS.PRICE) {
           return onNext();
         }
+        console.log(data);
         setIsLoading(true);
-    
-        axios.post('/api/listings', data)
-        .then(() => {
-          toast.success('Listing created!');
-          
-          router.refresh();
-          reset();
-          setStep(STEPS.CATEGORY)
-          rentModal.onClose();
-        })
-        .catch(() => {
-          toast.error('Something went wrong.');
-        })
-        .finally(() => {
-          setIsLoading(false);
-        })
-      }
+
+        const hostId = 1;
+      
+        // Adjust the data object to match the structure the API is expecting
+        const postData = {
+          title: data.category,
+          description: data.description,
+          location: {
+            latitude: data.location.lat,
+            longitude: data.location.lng,
+            city: data.location.city,
+            country: data.location.country,
+            description: data.location.description,
+          },
+          pricePerNight: data.pricePerNight,
+          maxGuests: data.guestCount,
+          availableFrom: data.availableFrom,
+          availableTo: data.availableTo,
+          roomType: data.roomType,
+          beds: data.roomCount,
+          amenities: data.bathroomCount,
+          photos: data.imageSrc
+        };
+      
+        axios.post(`/api/v1/hosts/${hostId}/listings`, postData)
+          .then(() => {
+            toast.success('Listing created!');
+      
+            router.refresh();
+            reset();
+            setStep(STEPS.CATEGORY);
+            rentModal.onClose();
+          })
+          .catch(() => {
+            toast.error('Something went wrong.');
+          })
+          .finally(() => {
+            setIsLoading(false);
+          });
+      }      
 
       const actionLabel = useMemo(() => {
         if (step === STEPS.PRICE) {
