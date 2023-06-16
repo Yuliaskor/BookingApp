@@ -12,12 +12,14 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/hosts")
 @Tag(name = "Host Controller")
+@CrossOrigin(origins = "http://localhost:3000")
 public class HostController {
 
     private final HostService hostService;
@@ -29,6 +31,7 @@ public class HostController {
         return ResponseEntity.ok(hostService.getHostById(id).toDTO());
     }
 
+    // TODO: create new host on first login
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Add new host", description = "Add new host")
@@ -39,6 +42,7 @@ public class HostController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Delete host", description = "Delete host by id")
     void deleteHost(@PathVariable long id) {
         hostService.deleteHost(id);
@@ -46,6 +50,7 @@ public class HostController {
 
     @PostMapping("/{id}/listings")
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Add new listing", description = "Add new listing to host listings")
     ResponseEntity<ListingDTO> addListing(@PathVariable("id") int hostId, @Valid @RequestBody ListingRequest listing) {
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -53,6 +58,7 @@ public class HostController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Update host information", description = "Update host information by id")
     ResponseEntity<HostDTO> updateHost(@PathVariable long id, @Valid @RequestBody HostRequest host) {
         return ResponseEntity.ok(hostService.updateHost(id, host).toDTO());
