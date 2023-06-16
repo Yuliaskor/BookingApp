@@ -4,6 +4,7 @@ import com.example.bookingapp.dto.request.ListingRequest;
 import com.example.bookingapp.dto.request.ReservationRequest;
 import com.example.bookingapp.dto.response.ListingDTO;
 import com.example.bookingapp.dto.response.ReservationDTO;
+import com.example.bookingapp.enums.Category;
 import com.example.bookingapp.model.Listing;
 import com.example.bookingapp.model.Reservation;
 import com.example.bookingapp.service.ListingService;
@@ -33,8 +34,9 @@ public class ListingController {
     ResponseEntity<Page<ListingDTO>> getListings(
             @ParameterObject
             @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.ASC)
-            Pageable pageable) {
-        return ResponseEntity.ok(listingService.getListings(pageable).map(Listing::toDTO));
+            Pageable pageable,
+            @RequestParam(required = false) Category category) {
+        return ResponseEntity.ok(listingService.getListings(category, pageable).map(Listing::toDTO));
     }
 
     @GetMapping("/{id}")

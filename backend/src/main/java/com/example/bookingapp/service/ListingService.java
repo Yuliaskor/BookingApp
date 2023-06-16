@@ -4,6 +4,7 @@ import com.example.bookingapp.dto.request.ListingRequest;
 import com.example.bookingapp.dto.request.ReservationRequest;
 import com.example.bookingapp.email.EmailService;
 import com.example.bookingapp.email.ReservationConfirmation;
+import com.example.bookingapp.enums.Category;
 import com.example.bookingapp.exceptions.listing.ListingNotFoundException;
 import com.example.bookingapp.model.Host;
 import com.example.bookingapp.model.Listing;
@@ -28,7 +29,10 @@ public class ListingService {
     private final HostRepository hostRepository;
     private final EmailService emailService;
 
-    public Page<Listing> getListings(Pageable pageable) {
+    public Page<Listing> getListings(Category category, Pageable pageable) {
+        if (category != null) {
+            return listingRepository.findAllByCategory(category, pageable);
+        }
         return listingRepository.findAll(pageable);
     }
 
