@@ -1,8 +1,10 @@
 package com.example.bookingapp.controller;
 
+import com.example.bookingapp.dto.request.ListingRequest;
 import com.example.bookingapp.dto.request.ReservationRequest;
 import com.example.bookingapp.dto.response.ListingDTO;
 import com.example.bookingapp.dto.response.ReservationDTO;
+import com.example.bookingapp.enums.Category;
 import com.example.bookingapp.model.Listing;
 import com.example.bookingapp.model.Reservation;
 import com.example.bookingapp.service.ListingService;
@@ -16,6 +18,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +26,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/listings")
+@CrossOrigin(origins = "http://localhost:3000")
 public class ListingController {
 
     private final ListingService listingService;
@@ -32,8 +36,9 @@ public class ListingController {
     ResponseEntity<Page<ListingDTO>> getListings(
             @ParameterObject
             @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.ASC)
-            Pageable pageable) {
-        return ResponseEntity.ok(listingService.getListings(pageable).map(Listing::toDTO));
+            Pageable pageable,
+            @RequestParam(required = false) Category category) {
+        return ResponseEntity.ok(listingService.getListings(category, pageable).map(Listing::toDTO));
     }
 
     @GetMapping("/{id}")
@@ -42,8 +47,16 @@ public class ListingController {
         return ResponseEntity.ok(listingService.getListingById(id).toDTO());
     }
 
+    @PutMapping("/{id}")
+    @Operation(summary = "Update listing information", description = "Update listing information by id")
+    @PreAuthorize("isAuthenticated()")
+    ResponseEntity<ListingDTO> updateListing(@PathVariable long id, @Valid @RequestBody ListingRequest listing) {
+        return ResponseEntity.ok(listingService.updateListing(id, listing).toDTO());
+    }
+
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Delete listing", description = "Delete listing by id")
     void deleteListing(@PathVariable long id) {
         listingService.deleteListing(id);
@@ -64,14 +77,6 @@ public class ListingController {
     ResponseEntity<ReservationDTO> addReservation(@PathVariable("id") long listingId, @Valid @RequestBody ReservationRequest reservation) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(listingService.addReservationToListing(listingId, reservation).toDTO());
-    }
-
-    // todo: only host can cancel reservation
-    @DeleteMapping("/{listing_id}/reservations/{reservation_id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(summary = "Cancel reservation", description = "Delete reservation from listing reservations")
-    void cancelReservation(@PathVariable("listing_id") long listingId, @PathVariable("reservation_id") long reservationId) {
-        listingService.deleteReservationFromListing(listingId, reservationId);
     }
 
 }

@@ -7,6 +7,7 @@ import com.example.bookingapp.exceptions.reservation.ReservationNotFoundExceptio
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 
@@ -47,6 +48,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ReservationNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleReservationNotFoundException(ReservationNotFoundException e) {
         ErrorResponse errorResponse = new ErrorResponse(404, e.getMessage(), LocalDateTime.now());
+        return ResponseEntity
+                .badRequest()
+                .body(errorResponse);
+    }
+
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<ErrorResponse> handleResponseStatusException(ResponseStatusException e) {
+        ErrorResponse errorResponse = new ErrorResponse(e.getStatusCode().value(), e.getMessage(), LocalDateTime.now());
         return ResponseEntity
                 .badRequest()
                 .body(errorResponse);

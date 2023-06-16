@@ -4,8 +4,8 @@ import com.example.bookingapp.dto.request.ListingRequest;
 import com.example.bookingapp.dto.request.ReservationRequest;
 import com.example.bookingapp.email.EmailService;
 import com.example.bookingapp.email.ReservationConfirmation;
+import com.example.bookingapp.enums.Category;
 import com.example.bookingapp.exceptions.listing.ListingNotFoundException;
-import com.example.bookingapp.exceptions.reservation.ReservationNotFoundException;
 import com.example.bookingapp.model.Host;
 import com.example.bookingapp.model.Listing;
 import com.example.bookingapp.model.Reservation;
@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -28,7 +29,10 @@ public class ListingService {
     private final HostRepository hostRepository;
     private final EmailService emailService;
 
-    public Page<Listing> getListings(Pageable pageable) {
+    public Page<Listing> getListings(Category category, Pageable pageable) {
+        if (category != null) {
+            return listingRepository.findAllByCategory(category, pageable);
+        }
         return listingRepository.findAll(pageable);
     }
 
@@ -38,6 +42,7 @@ public class ListingService {
 
     public Listing addListing(int hostId, ListingRequest listingRequest) {
         Host host = hostService.getHostById(hostId);
+        checkPhotos(listingRequest);
         Listing listing = listingRequest.toEntity();
         listing.setHost(host);
         host.addListing(listing);
@@ -70,32 +75,15 @@ public class ListingService {
         }
     }
 
+    public Listing updateListing(long id, ListingRequest listing) {
+        checkPhotos(listing);
+        Listing listingToUpdate = getListingById(id);
+        listingToUpdate.update(listing);
+        return listingRepository.save(listingToUpdate);
+    }
+
     public List<Reservation> getReservationsByListingId(long listingId) {
         return getListingById(listingId).getReservations();
-    }
-
-    public void deleteReservationFromListing(long listingId, long reservationId) {
-        Listing listing = getListingById(listingId);
-        Reservation reservation = findReservationInListing(listingId, reservationId, listing);
-        checkIfReservationCanBeDeleted(reservation);
-        listing.deleteReservation(reservation);
-        listingRepository.save(listing);
-    }
-
-    private void checkIfReservationCanBeDeleted(Reservation reservation) {
-        if (reservation.getCheckInDate().isEqual(LocalDate.now()) || reservation.getCheckInDate().isBefore(LocalDate.now())) {
-            throw new IllegalArgumentException(
-                    "Reservation with id " + reservation.getId() + " cannot be cancelled because it has already started or has already ended"
-            );
-        }
-    }
-
-    private Reservation findReservationInListing(long listingId, long reservationId, Listing listing) {
-        return listing.getReservations()
-                .stream()
-                .filter(r -> r.getId() == reservationId)
-                .findFirst()
-                .orElseThrow(() -> new ReservationNotFoundException(listingId, reservationId));
     }
 
     private void sendConfirmationOfReservationEmail(ReservationRequest reservationDTO, Listing listing, Reservation reservation) {
@@ -108,5 +96,15 @@ public class ListingService {
                 reservation.getNumberOfGuests()
         );
         emailService.sendConfirmationOfReservation(reservationDTO.tenantEmail(), "Reservation confirmation", confirmation);
+    }
+
+    private void checkPhotos(ListingRequest listing) {
+        for (String photo : listing.photos()) {
+            try {
+                URI.create(photo).toURL();
+            } catch (Exception e) {
+                throw new IllegalArgumentException("'" + photo + "' is invalid url");
+            }
+        }
     }
 }

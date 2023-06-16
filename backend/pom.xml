@@ -63,6 +63,15 @@
             <artifactId>liquibase-core</artifactId>
             <version>4.22.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.apis</groupId>
+            <artifactId>google-api-services-oauth2</artifactId>
+            <version>v2-rev20200213-1.32.1</version>
+        </dependency>
     </dependencies>
 
 
@@ -86,7 +95,7 @@
                 <version>4.22.0</version>
                 <configuration>
                     <driver>com.mysql.cj.jdbc.Driver</driver>
-                    <url>jdbc:mysql://localhost:3306/db</url>
+                    <url>jdbc:mysql://localhost:3306/bookingapp</url>
                     <username>root</username>
                     <password>root</password>
                     <changeLogFile>src/main/resources/db/changelog/db.changelog-master.xml</changeLogFile>

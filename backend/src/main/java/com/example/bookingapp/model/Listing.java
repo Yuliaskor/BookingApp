@@ -1,8 +1,9 @@
 package com.example.bookingapp.model;
 
 import com.example.bookingapp.dto.LocationDTO;
+import com.example.bookingapp.dto.request.ListingRequest;
 import com.example.bookingapp.dto.response.ListingDTO;
-import com.example.bookingapp.enums.Bed;
+import com.example.bookingapp.enums.Category;
 import com.example.bookingapp.enums.RoomType;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -54,17 +55,18 @@ public class Listing {
     @OneToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "listings_reservations", joinColumns = @JoinColumn(name = "listing_id"), inverseJoinColumns = @JoinColumn(name = "reservation_id"))
     private List<Reservation> reservations;
-    @ElementCollection
-    @CollectionTable(name = "listings_beds", joinColumns = @JoinColumn(name = "listing_id"))
-    @Column(name = "bed", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private List<Bed> beds;
+    @Column(nullable = false)
+    private int numberOfRooms;
+    @Column(nullable = false)
+    private int numberOfBathrooms;
     @ElementCollection
     @CollectionTable(name = "listings_amenities", joinColumns = @JoinColumn(name = "listing_id"))
     @Column(name = "amenity", nullable = false)
     private List<String> amenities = new ArrayList<>();
+    @Column(nullable = false)
+    private Category category;
 
-    public Listing(String title, String description, LocationDTO location, BigDecimal pricePerNight, int maxGuests, LocalDate availableFrom, LocalDate availableTo, RoomType roomType, List<Bed> beds, List<String> amenities) {
+    public Listing(String title, String description, LocationDTO location, BigDecimal pricePerNight, int maxGuests, LocalDate availableFrom, LocalDate availableTo, RoomType roomType, int numberOfRooms, int numberOfBathrooms, List<String> amenities, Category category) {
         this.title = title;
         this.description = description;
         this.location = location.toEntity();
@@ -73,11 +75,13 @@ public class Listing {
         this.availableFrom = availableFrom;
         this.availableTo = availableTo;
         this.roomType = roomType;
-        this.beds = beds;
+        this.numberOfRooms = numberOfRooms;
+        this.numberOfBathrooms = numberOfBathrooms;
         this.amenities = amenities;
         this.photos = List.of();
         this.reservations = List.of();
         this.ratings = List.of();
+        this.category = category;
     }
 
     public ListingDTO toDTO() {
@@ -94,8 +98,10 @@ public class Listing {
                 this.availableTo,
                 this.roomType,
                 this.reservations.stream().map(Reservation::toDTO).toList(),
-                this.beds,
-                this.amenities
+                this.numberOfRooms,
+                this.numberOfBathrooms,
+                this.amenities,
+                this.category.getName()
         );
     }
 
@@ -145,7 +151,19 @@ public class Listing {
         }
     }
 
-    public void deleteReservation(Reservation reservation) {
-        reservations.remove(reservation);
+    public void update(ListingRequest listing) {
+        this.title = listing.title();
+        this.description = listing.description();
+        this.location = listing.location().toEntity();
+        this.photos = listing.photos();
+        this.pricePerNight = listing.pricePerNight();
+        this.maxGuests = listing.maxGuests();
+        this.availableFrom = listing.availableFrom();
+        this.availableTo = listing.availableTo();
+        this.roomType = listing.roomType();
+        this.numberOfRooms = listing.numberOfRooms();
+        this.numberOfBathrooms = listing.numberOfBathrooms();
+        this.amenities = listing.amenities();
+        this.category = listing.category();
     }
 }
