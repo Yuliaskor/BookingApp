@@ -26,7 +26,7 @@ public record ListingDTO(
         int maxGuests,
         @Schema(description = "listing available from", example = "2021-01-01")
         LocalDate availableFrom,
-        @Schema(description = "listing available to", example = "2023-01-01")
+        @Schema(description = "listing available to", example = "2030-01-01")
         LocalDate availableTo,
         @Schema(description = "listing reservations")
         List<ReservationDTO> reservations,
