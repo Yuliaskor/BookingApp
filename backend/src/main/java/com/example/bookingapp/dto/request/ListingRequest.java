@@ -67,7 +67,7 @@ public record ListingRequest(
                 numberOfRooms,
                 numberOfBathrooms,
                 amenities,
-                photos,
+                photos.stream().filter(photo -> !photo.isBlank()).toList(),
                 category
         );
     }
