@@ -6,6 +6,7 @@ import { toast } from "react-hot-toast";
 import { Range } from "react-date-range";
 import { useRouter } from "next/navigation";
 import { differenceInDays, eachDayOfInterval } from 'date-fns';
+import { DiscussionEmbed } from 'disqus-react';
 
 import Container from "@/app/components/Container";
 import { categories } from "@/app/components/navbar/Categories";
@@ -74,6 +75,13 @@ const ListingClient: React.FC<ListingClientProps> = ({
  // reservations = [],
 //  currentUser
 }) => {
+  const disqusShortname = "airbnb-web";
+  const disqusConfig = {
+    url: `http://localhost:3000/listings/${listing.id}`,
+    identifier: `listing_${listing.id}`,
+    title: `listing_${listing.id}`
+  };
+
   const reserveModal = useReserveModal();
   const router = useRouter();
   console.log(listing);
@@ -172,6 +180,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
               md:grid-cols-7 
               md:gap-10 
               mt-6
+              mb-6
             "
           >
             <ListingInfo
@@ -202,6 +211,11 @@ const ListingClient: React.FC<ListingClientProps> = ({
               />
             </div>
           </div>
+          <hr></hr>
+          <DiscussionEmbed
+            shortname={disqusShortname}
+            config={disqusConfig}
+          />
         </div>
       </div>
     </Container>
