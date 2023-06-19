@@ -149,6 +149,9 @@ const RentModel = () => {
 
         const session = await getSession();
         const token = session.id_token;
+
+        console.log(token)
+        console.log(session)
       
         axios.post(`http://localhost:8080/api/v1/hosts/${hostId}/listings`, postData, {
           headers: {

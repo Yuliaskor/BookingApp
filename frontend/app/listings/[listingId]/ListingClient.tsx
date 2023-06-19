@@ -49,7 +49,7 @@ interface CurrentUser {
     title: string;
     description: string;
     location: ILocation;
-    photos: string;
+    photos: string[];
     pricePerNight: number;
     maxGuests: number;
     availableFrom: string;
@@ -160,7 +160,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
         <div className="flex flex-col gap-6">
           <ListingHead
             title={listing.title}
-            imageSrc={"https://res.cloudinary.com/dovtmuel7/image/upload/v1685968009/qhzkhlj5iwm1keyayomb.jpg"}
+            imageSrc={listing.photos[0]}
             locationValue = {listing.location?.description}
             id={listing.id.toString()}
          //   currentUser={currentUser}

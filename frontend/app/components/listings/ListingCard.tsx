@@ -40,7 +40,7 @@ interface CurrentUser {
     title: string;
     description: string;
     location: ILocation;
-    photos: string;
+    photos: string[];
     pricePerNight: number;
     maxGuests: number;
     availableFrom: string;
@@ -131,9 +131,9 @@ const ListingCard: React.FC<ListingCardProps> = ({
               group-hover:scale-110 
               transition
             "
-          //  src={data.imageSrc[0]}
+           src={data.photos[0]}
         
-           src="https://res.cloudinary.com/dovtmuel7/image/upload/v1686949278/av5lwqefqsjrt3wxtj7r.webp"
+           //src="https://res.cloudinary.com/dovtmuel7/image/upload/v1686949278/av5lwqefqsjrt3wxtj7r.webp"
             alt="Listing"
           />
           <div className="
