@@ -62,6 +62,8 @@ public class Listing {
     private List<String> amenities = new ArrayList<>();
     @Column(nullable = false)
     private Category category;
+    @Version
+    private Integer version;
 
     public Listing(String title, String description, LocationDTO location, BigDecimal pricePerNight, int maxGuests, LocalDate availableFrom, LocalDate availableTo, int numberOfRooms, int numberOfBathrooms, List<String> amenities, List<String> photos, Category category) {
         this.title = title;
