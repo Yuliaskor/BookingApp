@@ -23,9 +23,7 @@ import { toast } from 'react-hot-toast';
 
 import { FaWifi, FaTv, FaUtensils, FaSwimmingPool, FaParking, FaDumbbell } from 'react-icons/fa';
 import AmenityBox from "../inputs/AmenityBox";
-
-const token = '794839251456-c6sna97nt0qh1i31l3f2h9ksj9j5s6eo.apps.googleusercontent.com';
-
+import {getSession} from "next-auth/react";
 
 const amenities = [
     { label: 'Wifi', icon: FaWifi },
@@ -107,7 +105,7 @@ const RentModel = () => {
         setStep((value) => value + 1);
       }
 
-      const onSubmit: SubmitHandler<FieldValues> = (data) => {
+  const onSubmit: SubmitHandler<FieldValues> = async (data) => {
         if (step !== STEPS.AMENITIES) {
           return onNext();
         }
@@ -148,6 +146,9 @@ const RentModel = () => {
         };
 
         console.log(postData);
+
+        const session = await getSession();
+        const token = session.id_token;
       
         axios.post(`http://localhost:8080/api/v1/hosts/${hostId}/listings`, postData, {
           headers: {
