@@ -13,6 +13,7 @@ import ListingHead from "@/app/components/listings/ListingHead";
 import ListingInfo from "@/app/components/listings/ListingInfo";
 import ListingReservation from "@/app/components/listings/ListingReservation";
 import useReserveModal from "@/app/hooks/useReserveModal";
+import { getSession } from "next-auth/react";
 
 const initialDateRange = {
   startDate: new Date(),
@@ -79,20 +80,43 @@ const ListingClient: React.FC<ListingClientProps> = ({
   console.log(listing);
  
 
-//   const disabledDates = useMemo(() => {
-//     let dates: Date[] = [];
+  const disabledDates = useMemo(() => {
+    const fetchDisabledDates = async () => {
+      try {
 
-//     reservations.forEach((reservation: any) => {
-//       const range = eachDayOfInterval({
-//         start: new Date(reservation.startDate),
-//         end: new Date(reservation.endDate)
-//       });
+        const session = await getSession();
+        const token = session.id_token;
 
-//       dates = [...dates, ...range];
-//     });
-
-//     return dates;
-//   }, [reservations]);
+        const response = await axios.get(`http://localhost:8080/api/v1/listings/${listing.id}/reservations`, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        const data = response.data; // Retrieved data array
+  
+        const disabledDatesArray = data.reduce((dates: string[], item: any) => {
+          const { checkInDate, checkOutDate } = item;
+          const startDate = new Date(checkInDate);
+          const endDate = new Date(checkOutDate);
+  
+          const currentDate = new Date(startDate);
+          while (currentDate <= endDate) {
+            dates.push(currentDate.toISOString().split('T')[0]);
+            currentDate.setDate(currentDate.getDate() + 1);
+          }
+  
+          return dates;
+        }, []);
+  
+        console.log(disabledDatesArray);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+  
+    fetchDisabledDates();
+  }, []);
 
   const category = useMemo(() => {
      return categories.find((items) => 
@@ -103,36 +127,36 @@ const ListingClient: React.FC<ListingClientProps> = ({
   const [totalPrice, setTotalPrice] = useState(listing.pricePerNight);
   const [dateRange, setDateRange] = useState<Range>(initialDateRange);
 
-  const onCreateReservation = useCallback(() => {
+  // const onCreateReservation = useCallback(() => {
 
-      setIsLoading(true);
+  //     setIsLoading(true);
 
-      axios.post('/api/reservations', {
-        totalPrice,
-        startDate: dateRange.startDate,
-        endDate: dateRange.endDate,
-        listingId: listing?.id
-      })
-      .then(() => {
-        toast.success('Listing reserved!');
-        setDateRange(initialDateRange);
-        router.push('/trips');
-      })
-      .catch(() => {
-        toast.error('Something went wrong.');
-      })
-      .finally(() => {
-        setIsLoading(false);
-      })
-  },
-  [
-    totalPrice, 
-    dateRange, 
-    listing?.id,
-    router,
-   // currentUser,
-    reserveModal
-  ]);
+  //     axios.post('/api/reservations', {
+  //       totalPrice,
+  //       startDate: dateRange.startDate,
+  //       endDate: dateRange.endDate,
+  //       listingId: listing?.id
+  //     })
+  //     .then(() => {
+  //       toast.success('Listing reserved!');
+  //       setDateRange(initialDateRange);
+  //       router.push('/trips');
+  //     })
+  //     .catch(() => {
+  //       toast.error('Something went wrong.');
+  //     })
+  //     .finally(() => {
+  //       setIsLoading(false);
+  //     })
+  // },
+  // [
+  //   totalPrice, 
+  //   dateRange, 
+  //   listing?.id,
+  //   router,
+  //  // currentUser,
+  //   reserveModal
+  // ]);
 
   useEffect(() => {
     if (dateRange.startDate && dateRange.endDate) {
@@ -148,6 +172,26 @@ const ListingClient: React.FC<ListingClientProps> = ({
       }
     }
   }, [dateRange, listing.pricePerNight]);
+
+  const handleReserveClick = () => {
+    let checkInDate = formatDate(dateRange.endDate);
+    let checkOutDate = formatDate(dateRange.startDate);
+    const listingId = listing.id;
+
+    reserveModal.onOpen( checkOutDate, checkInDate, listingId);
+  };
+
+  function formatDate(date: Date | undefined): string {
+
+    if(date != undefined){
+      const year = date.getFullYear();
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const day = date.getDate().toString().padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    } else{
+      return "";
+    } 
+  }
 
   return ( 
     <Container>
@@ -196,9 +240,9 @@ const ListingClient: React.FC<ListingClientProps> = ({
                 totalPrice={totalPrice}
                 onChangeDate={(value) => setDateRange(value)}
                 dateRange={dateRange}
-                onSubmit={reserveModal.onOpen}
+                onSubmit={handleReserveClick}
                 disabled={isLoading}
-               // disabledDates={disabledDates}
+                disabledDates={disabledDates}
               />
             </div>
           </div>

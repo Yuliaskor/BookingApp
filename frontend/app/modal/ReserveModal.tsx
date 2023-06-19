@@ -16,33 +16,99 @@ import {
 
 import { toast } from "react-hot-toast";
 import { log } from "console";
-import { useRouter } from "next/router";
+import { useRouter } from 'next/navigation';
 import useReserveModal from "../hooks/useReserveModal";
+import { getSession } from "next-auth/react";
+import CountrySelect from "../inputs/CountrySelect";
+import Counter from "../inputs/Counter";
+import { watch } from "fs";
 
 
 const ReserveModal = () => {
-   // const router = useRouter();
+    const router = useRouter();
     const reserveModal = useReserveModal();
     const [isLoading, setIsLoading] = useState(false);
 
     const { 
         register, 
         handleSubmit,
+        setValue,
+        watch,
+        reset,
         formState: {
           errors,
         },
       } = useForm<FieldValues>({
         defaultValues: {
           email: '',
-          password: ''
+          password: '',
+          guestCount: 1,
         },
       });
+      const guestCount = watch('guestCount');
 
-      const onSubmit: SubmitHandler<FieldValues> = 
-        (data) => {
-        
-  }
+      const setCustomValue = (id: string, value: any) => {
+        setValue(id, value, {
+          shouldDirty: true,
+          shouldTouch: true,
+          shouldValidate: true
+        })
+      }
 
+      const onSubmit: SubmitHandler<FieldValues> = async (data) => {
+ 
+        // console.log(data);
+        // console.log(category);
+        // console.log()
+        setIsLoading(true);
+
+
+        const listingId = 1;
+
+        const session = await getSession();
+        const token = session.id_token;
+
+
+        const photoList = [];
+        photoList.push(data.imageSrc);
+
+      
+        // Adjust the data object to match the structure the API is expecting
+        const postData = {
+          tenantName: data.name,
+          tenantEmail: data.email,
+          checkInDate: reserveModal.checkInDate,
+          checkOutDate: reserveModal.checkOutDate,
+          numberOfGuests: guestCount
+        };
+
+        console.log(postData);
+
+
+        console.log(token)
+        console.log("DDDDD")
+        console.log(reserveModal.listingId)
+      
+        axios.post(`http://localhost:8080/api/v1/listings/${reserveModal.listingId}/reservations`, postData, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        })
+          .then(() => {
+            toast.success('Listing created!');
+      
+            router.refresh();
+            reset();
+            reserveModal.onClose();
+          })
+          .catch(() => {
+            toast.error('Something went wrong.');
+          })
+          .finally(() => {
+            setIsLoading(false);
+          });
+      }    
       // const onToggle = useCallback(() => {
       //   loginModal.onClose();
       //   registerModal.onOpen();
@@ -68,6 +134,12 @@ const ReserveModal = () => {
             register={register}
             errors={errors}
             required
+          />
+          <Counter
+             onChange={(value) => setCustomValue('guestCount', value)}
+             value={guestCount}
+             title="Guests" 
+             subtitle="How many guests do you allow?"
           />
         </div>
       )
@@ -107,3 +179,5 @@ const ReserveModal = () => {
 }
 
 export default ReserveModal;
+
+

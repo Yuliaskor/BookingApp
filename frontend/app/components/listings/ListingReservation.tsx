@@ -12,7 +12,7 @@ interface ListingReservationProps {
   onChangeDate: (value: Range) => void;
   onSubmit: () => void;
   disabled?: boolean;
- // disabledDates: Date[];
+  disabledDates: Date[];
 }
 
 const ListingReservation: React.FC<
@@ -24,7 +24,7 @@ const ListingReservation: React.FC<
   onChangeDate,
   onSubmit,
   disabled,
-//  disabledDates
+  disabledDates
 }) => {
   return ( 
     <div 
@@ -48,7 +48,7 @@ const ListingReservation: React.FC<
       <hr />
       <DatePicker
         value={dateRange}
-       // disabledDates={disabledDates}
+        disabledDates={disabledDates}
         onChange={(value) => 
           onChangeDate(value.selection)}
       />
