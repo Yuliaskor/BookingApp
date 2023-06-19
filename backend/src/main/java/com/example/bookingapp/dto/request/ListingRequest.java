@@ -38,7 +38,7 @@ public record ListingRequest(
         @Schema(description = "listing available from", example = "2021-01-01")
         LocalDate availableFrom,
         @JsonFormat(pattern = "yyyy-MM-dd")
-        @Schema(description = "listing available to", example = "2023-01-01")
+        @Schema(description = "listing available to", example = "2030-01-01")
         LocalDate availableTo,
         @NotNull(message = "Number of rooms must not be null")
         @Min(value = 1, message = "Number of rooms must be greater than 0")
