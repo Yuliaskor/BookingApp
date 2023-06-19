@@ -4,7 +4,6 @@ import com.example.bookingapp.dto.LocationDTO;
 import com.example.bookingapp.dto.request.ListingRequest;
 import com.example.bookingapp.dto.response.ListingDTO;
 import com.example.bookingapp.enums.Category;
-import com.example.bookingapp.enums.RoomType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -46,9 +45,6 @@ public class Listing {
     private int maxGuests;
     private LocalDate availableFrom;
     private LocalDate availableTo;
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private RoomType roomType;
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinTable(name = "listings_ratings", joinColumns = @JoinColumn(name = "listing_id"), inverseJoinColumns = @JoinColumn(name = "rating_id"))
     private List<Rating> ratings;
@@ -66,7 +62,7 @@ public class Listing {
     @Column(nullable = false)
     private Category category;
 
-    public Listing(String title, String description, LocationDTO location, BigDecimal pricePerNight, int maxGuests, LocalDate availableFrom, LocalDate availableTo, RoomType roomType, int numberOfRooms, int numberOfBathrooms, List<String> amenities, Category category) {
+    public Listing(String title, String description, LocationDTO location, BigDecimal pricePerNight, int maxGuests, LocalDate availableFrom, LocalDate availableTo, int numberOfRooms, int numberOfBathrooms, List<String> amenities, List<String> photos, Category category) {
         this.title = title;
         this.description = description;
         this.location = location.toEntity();
@@ -74,11 +70,10 @@ public class Listing {
         this.maxGuests = maxGuests;
         this.availableFrom = availableFrom;
         this.availableTo = availableTo;
-        this.roomType = roomType;
         this.numberOfRooms = numberOfRooms;
         this.numberOfBathrooms = numberOfBathrooms;
         this.amenities = amenities;
-        this.photos = List.of();
+        this.photos = photos;
         this.reservations = List.of();
         this.ratings = List.of();
         this.category = category;
@@ -96,7 +91,6 @@ public class Listing {
                 this.maxGuests,
                 this.availableFrom,
                 this.availableTo,
-                this.roomType,
                 this.reservations.stream().map(Reservation::toDTO).toList(),
                 this.numberOfRooms,
                 this.numberOfBathrooms,
@@ -160,7 +154,6 @@ public class Listing {
         this.maxGuests = listing.maxGuests();
         this.availableFrom = listing.availableFrom();
         this.availableTo = listing.availableTo();
-        this.roomType = listing.roomType();
         this.numberOfRooms = listing.numberOfRooms();
         this.numberOfBathrooms = listing.numberOfBathrooms();
         this.amenities = listing.amenities();

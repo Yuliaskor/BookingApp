@@ -1,7 +1,6 @@
 package com.example.bookingapp.dto.response;
 
 import com.example.bookingapp.dto.LocationDTO;
-import com.example.bookingapp.enums.RoomType;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.math.BigDecimal;
@@ -29,8 +28,6 @@ public record ListingDTO(
         LocalDate availableFrom,
         @Schema(description = "listing available to", example = "2023-01-01")
         LocalDate availableTo,
-        @Schema(description = "listing room type", example = "ENTIRE_PLACE")
-        RoomType roomType,
         @Schema(description = "listing reservations")
         List<ReservationDTO> reservations,
         @Schema(description = "listing number of rooms", example = "2")
