@@ -1,5 +1,6 @@
 package com.example.bookingapp.service;
 
+import com.example.bookingapp.dto.RatingDTO;
 import com.example.bookingapp.dto.request.ListingRequest;
 import com.example.bookingapp.dto.request.ReservationRequest;
 import com.example.bookingapp.email.EmailService;
@@ -106,5 +107,11 @@ public class ListingService {
                 throw new IllegalArgumentException("'" + photo + "' is invalid url");
             }
         }
+    }
+
+    public void addRatingToListing(long listingId, RatingDTO rating) {
+        Listing listing = getListingById(listingId);
+        listing.addRating(rating.amount());
+        listingRepository.save(listing);
     }
 }

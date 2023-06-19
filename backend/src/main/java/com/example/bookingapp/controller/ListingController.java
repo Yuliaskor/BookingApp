@@ -1,5 +1,6 @@
 package com.example.bookingapp.controller;
 
+import com.example.bookingapp.dto.RatingDTO;
 import com.example.bookingapp.dto.request.ListingRequest;
 import com.example.bookingapp.dto.request.ReservationRequest;
 import com.example.bookingapp.dto.response.ListingDTO;
@@ -77,6 +78,13 @@ public class ListingController {
     ResponseEntity<ReservationDTO> addReservation(@PathVariable("id") long listingId, @Valid @RequestBody ReservationRequest reservation) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(listingService.addReservationToListing(listingId, reservation).toDTO());
+    }
+
+    @PostMapping("/{id}/ratings")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Add new rating", description = "Add new value to listing ratings")
+    void addRatingToListing(@PathVariable("id") long listingId, @Valid @RequestBody RatingDTO rating) {
+        listingService.addRatingToListing(listingId, rating);
     }
 
 }

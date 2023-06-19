@@ -37,6 +37,8 @@ public record ListingDTO(
         @Schema(description = "listing amenities", example = "[\"WIFI\", \"TV\"]")
         List<String> amenities,
         @Schema(description = "listing category", example = "Beach")
-        String category
+        String category,
+        @Schema(description = "listing value", example = "4.5")
+        Double rating
 ) {
 }

@@ -45,9 +45,10 @@ public class Listing {
     private int maxGuests;
     private LocalDate availableFrom;
     private LocalDate availableTo;
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinTable(name = "listings_ratings", joinColumns = @JoinColumn(name = "listing_id"), inverseJoinColumns = @JoinColumn(name = "rating_id"))
-    private List<Rating> ratings;
+    @ElementCollection
+    @CollectionTable(name = "listings_ratings", joinColumns = @JoinColumn(name = "listing_id"))
+    @Column(name = "rating", nullable = false)
+    private List<Integer> ratings;
     @OneToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "listings_reservations", joinColumns = @JoinColumn(name = "listing_id"), inverseJoinColumns = @JoinColumn(name = "reservation_id"))
     private List<Reservation> reservations;
@@ -95,8 +96,16 @@ public class Listing {
                 this.numberOfRooms,
                 this.numberOfBathrooms,
                 this.amenities,
-                this.category.getName()
+                this.category.getName(),
+                this.getRating()
         );
+    }
+
+    private Double getRating() {
+        if (ratings.isEmpty()) {
+            return null;
+        }
+        return ratings.stream().mapToDouble(Integer::doubleValue).sum() / ratings.size();
     }
 
     public void addReservation(Reservation reservation) {
@@ -158,5 +167,9 @@ public class Listing {
         this.numberOfBathrooms = listing.numberOfBathrooms();
         this.amenities = listing.amenities();
         this.category = listing.category();
+    }
+
+    public void addRating(int rating) {
+        ratings.add(rating);
     }
 }
