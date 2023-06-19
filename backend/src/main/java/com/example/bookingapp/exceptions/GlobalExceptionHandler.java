@@ -4,7 +4,9 @@ import com.example.bookingapp.exceptions.host.HostAlreadyExistsException;
 import com.example.bookingapp.exceptions.host.HostNotFoundException;
 import com.example.bookingapp.exceptions.listing.ListingNotFoundException;
 import com.example.bookingapp.exceptions.reservation.ReservationNotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
@@ -58,6 +60,18 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse(e.getStatusCode().value(), e.getMessage(), LocalDateTime.now());
         return ResponseEntity
                 .badRequest()
+                .body(errorResponse);
+    }
+
+    @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
+    public ResponseEntity<ErrorResponse> handleObjectOptimisticLockingFailureException(ObjectOptimisticLockingFailureException e) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.CONFLICT.value(),
+                "Something went wrong, please try again",
+                LocalDateTime.now());
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
                 .body(errorResponse);
     }
 

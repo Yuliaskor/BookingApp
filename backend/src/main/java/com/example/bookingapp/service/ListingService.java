@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URI;
 import java.time.LocalDate;
@@ -58,9 +59,10 @@ public class ListingService {
         listingRepository.deleteById(id);
     }
 
+    @Transactional
     public Reservation addReservationToListing(long listingId, ReservationRequest reservationDTO) {
         checkDates(reservationDTO.checkInDate(), reservationDTO.checkOutDate());
-        Listing listing = getListingById(listingId);
+        Listing listing = getListingByIdWithLock(listingId);
         Reservation reservation = reservationDTO.toEntity(listing, listing.getPricePerNight());
         listing.checkIfReservationPossible(reservation);
         listing.addReservation(reservation);
@@ -68,6 +70,11 @@ public class ListingService {
         return listingRepository.save(listing)
                 .getReservations()
                 .get(listing.getReservations().size() - 1);
+    }
+
+    private Listing getListingByIdWithLock(long id) {
+        return listingRepository.findWithLockingById(id).orElseThrow(() -> new ListingNotFoundException(id));
+
     }
 
     private void checkDates(LocalDate startDate, LocalDate endDate) {
