@@ -99,7 +99,7 @@ public class ListingService {
     }
 
     private void checkPhotos(ListingRequest listing) {
-        for (String photo : listing.photos()) {
+        for (String photo : listing.photos().stream().filter(p -> !p.isBlank()).toList()) {
             try {
                 URI.create(photo).toURL();
             } catch (Exception e) {

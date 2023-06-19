@@ -149,7 +149,7 @@ public class Listing {
         this.title = listing.title();
         this.description = listing.description();
         this.location = listing.location().toEntity();
-        this.photos = listing.photos();
+        this.photos = listing.photos().stream().filter(photo -> !photo.isBlank()).toList();
         this.pricePerNight = listing.pricePerNight();
         this.maxGuests = listing.maxGuests();
         this.availableFrom = listing.availableFrom();
