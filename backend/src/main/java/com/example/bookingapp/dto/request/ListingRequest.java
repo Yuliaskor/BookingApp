@@ -2,7 +2,6 @@ package com.example.bookingapp.dto.request;
 
 import com.example.bookingapp.dto.LocationDTO;
 import com.example.bookingapp.enums.Category;
-import com.example.bookingapp.enums.RoomType;
 import com.example.bookingapp.model.Listing;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -41,9 +40,6 @@ public record ListingRequest(
         @JsonFormat(pattern = "yyyy-MM-dd")
         @Schema(description = "listing available to", example = "2023-01-01")
         LocalDate availableTo,
-        @NotNull(message = "Room type must not be null")
-        @Schema(description = "listing room type", example = "ENTIRE_PLACE")
-        RoomType roomType,
         @NotNull(message = "Number of rooms must not be null")
         @Min(value = 1, message = "Number of rooms must be greater than 0")
         @Schema(description = "listing number of rooms", example = "2")
@@ -68,10 +64,10 @@ public record ListingRequest(
                 maxGuests,
                 availableFrom,
                 availableTo,
-                roomType,
                 numberOfRooms,
                 numberOfBathrooms,
                 amenities,
+                photos,
                 category
         );
     }
