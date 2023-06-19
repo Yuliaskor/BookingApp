@@ -374,6 +374,7 @@ const RentModel = () => {
     }
     
 
+
     return (
 
         <Modal

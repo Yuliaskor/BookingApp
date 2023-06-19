@@ -84,17 +84,8 @@ const ReserveModal = () => {
 
         console.log(postData);
 
-
-        console.log(token)
-        console.log("DDDDD")
-        console.log(reserveModal.listingId)
       
-        axios.post(`http://localhost:8080/api/v1/listings/${reserveModal.listingId}/reservations`, postData, {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          }
-        })
+        axios.post(`http://localhost:8080/api/v1/listings/${reserveModal.listingId}/reservations`, postData)
           .then(() => {
             toast.success('Listing created!');
       

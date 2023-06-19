@@ -92,15 +92,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
     const fetchDisabledDates = async () => {
       try {
 
-        const session = await getSession();
-        const token = session.id_token;
-
-        const response = await axios.get(`http://localhost:8080/api/v1/listings/${listing.id}/reservations`, {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          }
-        });
+        const response = await axios.get(`http://localhost:8080/api/v1/listings/${listing.id}/reservations`);
         const data = response.data; // Retrieved data array
   
         const disabledDatesArray = data.reduce((dates: string[], item: any) => {
