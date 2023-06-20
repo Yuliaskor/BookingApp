@@ -18,7 +18,7 @@ public record ListingDTO(
         String description,
         @Schema(description = "listing location")
         LocationDTO location,
-        @Schema(description = "listing photos", example = "[\"https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1175&q=80\"]")
+        @Schema(description = "listing photos", example = "[\"https://res.cloudinary.com/dovtmuel7/image/upload/v1686949278/av5lwqefqsjrt3wxtj7r.webp\"]")
         List<String> photos,
         @Schema(description = "listing price per night", example = "100.00")
         BigDecimal pricePerNight,
