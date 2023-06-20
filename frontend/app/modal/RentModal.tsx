@@ -135,8 +135,6 @@ const RentModel = () => {
           photos: photoList,
           pricePerNight: parseInt(data.price),
           maxGuests: data.guestCount,
-          availableFrom: "2021-01-01",
-          availableTo: "2023-01-01",
           roomType: "ENTIRE_PLACE",
           numberOfRooms: data.roomCount,
           numberOfBathrooms: 1,
